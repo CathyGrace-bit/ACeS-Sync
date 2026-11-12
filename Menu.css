@@ -1,0 +1,96 @@
+/* HAMBURGER MENU BUTTON */
+.menu-toggle {
+    background: #0a1931;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+/* MENU OVERLAY */
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.menu-overlay.active {
+    display: block;
+}
+
+/* SIDE MENU */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100%;
+    background: #0a1931;
+    color: white;
+    z-index: 1000;
+    padding: 25px 20px;
+    box-sizing: border-box;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+}
+
+.side-menu.active {
+    left: 0;
+}
+
+/* MENU HEADER */
+.side-menu h2 {
+    color: #d4b678;
+    margin-bottom: 8px;
+}
+
+.side-menu p {
+    color: #cccccc;
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+/* MENU LINKS */
+.side-menu a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 13px 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.side-menu a:hover {
+    background: #1e3a8a;
+    color: #d4b678;
+}
+
+/* CLOSE BUTTON */
+.menu-close {
+    position: absolute;
+    top: 15px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+    .menu-toggle {
+        font-size: 22px;
+        padding: 8px 12px;
+    }
+
+    .side-menu {
+        width: 250px;
+    }
+}
