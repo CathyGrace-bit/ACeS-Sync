@@ -10,9 +10,9 @@ This document contains the HTML code exactly as provided in the chat. The linked
     <title>ACeS Sync - ACLC Mandaue</title>
  
     <!-- Main CSS file -->
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/menu.css">
-    <link rel="stylesheet" href="../css/features.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/features.css">
  
     <!-- Always hide inactive pages -->
     <style>
