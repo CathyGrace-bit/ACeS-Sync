@@ -471,32 +471,68 @@ function updateStats() {
    10. ADMIN LOGIN
 ===================================================== */
 
-function adminLogin() {
-    const id = getElement("adminId").value.trim();
-
+async function adminLogin() {
+    const email = getElement("adminId").value.trim();
     const password = getElement("adminPassword").value;
-
     const message = getElement("adminLoginMessage");
 
-    // DEMO LOGIN ONLY
-    if (id === "admin" && password === "1234") {
+    if (!email || !password) {
+        showMessage(message, "Please enter your email and password.");
+        return;
+    }
+
+    try {
+        showMessage(message, "Logging in...", "#93600a");
+
+        // Sign in using Supabase Authentication
+        const { data, error } =
+            await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+        if (error) throw error;
+
+        // Check whether this account has the admin role
+        const { data: roleData, error: roleError } =
+            await supabase
+                .from("user_roles")
+                .select("role")
+                .eq("user_id", data.user.id)
+                .maybeSingle();
+
+        if (roleError) throw roleError;
+
+        if (!roleData || roleData.role !== "admin") {
+            await supabase.auth.signOut();
+
+            showMessage(
+                message,
+                "Access denied. This account is not an admin."
+            );
+
+            return;
+        }
+
+        // Open Admin Dashboard
         getElement("loginPage").classList.add("hidden");
-
         getElement("studentPage").classList.add("hidden");
-
         getElement("adminPage").classList.remove("hidden");
 
         showMessage(message, "");
 
-        renderStudents();
-        updateStats();
-        renderPendingPayments();
+        // We'll connect these dashboard functions to Supabase next.
+        await loadAdminStudentsFromSupabase();
 
-    } else {
-        showMessage(message, "Incorrect Admin ID or Password.");
+    } catch (error) {
+        console.error("Admin login error:", error);
+
+        showMessage(
+            message,
+            error.message || "Unable to log in."
+        );
     }
 }
-
 
 /* =====================================================
    11. STUDENT LOGIN
