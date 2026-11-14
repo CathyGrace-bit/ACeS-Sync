@@ -1,29 +1,21 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>ACeS Sync - ACLC Mandaue</title>
+    <title>ACeS Sync | ACLC Mandaue Dashboard</title>
 
     <!-- Main CSS file -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/menu.css">
-    <link rel="stylesheet" href="css/features.css">
+    <link rel="stylesheet" href="../css/style.css">
 
     <!-- Always hide inactive pages -->
     <style>
         .hidden {
             display: none !important;
         }
-
-        .page {
-            width: 100%;
-            min-height: 100vh;
-        }
     </style>
 </head>
+
 <body>
 
     
@@ -137,9 +129,7 @@
                         <option>BSIT</option>
                         <option>BSCS</option>
                         <option>BSBA</option>
-                        <option>BSA</option>
-                        <option>BSHM</option>
-                        <option>GenEd</option>
+                        <option>BSTM</option>
                     </select>
                 </div>
 
@@ -293,70 +283,9 @@
             </div>
 
 
-            <!-- =====================================
-                 ADMIN / CASHIER LOGIN
-                 HIDDEN UNTIL ADMIN TAB IS CLICKED
-            ====================================== -->
-            <div id="adminLogin" class="login-form hidden">
-
-                <h2>Admin / Cashier Login</h2>
-
-                <div class="form-row">
-                    <label for="adminId">Admin ID</label>
-
-                    <input
-                        type="text"
-                        id="adminId"
-                        placeholder="Enter Admin ID"
-                        autocomplete="username"
-                    >
-                </div>
-
-
-                <div class="form-row">
-                    <label for="adminPassword">Password</label>
-
-                    <input
-                        type="password"
-                        id="adminPassword"
-                        placeholder="Enter Password"
-                        autocomplete="current-password"
-                    >
-                </div>
-
-
-                <button
-                    type="button"
-                    class="outline-btn full-btn"
-                    onclick="adminLogin()"
-                >
-                    Login as Admin / Cashier
-                </button>
-
-
-                <p
-                    id="adminLoginMessage"
-                    class="message"
-                    aria-live="polite"
-                ></p>
-
-
-                <p class="demo-note">
-                    Demo login: <strong>admin</strong> /
-                    <strong>1234</strong>
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================================
+    <!-- =====================================
          ADMIN DASHBOARD
-    ========================================== -->
+    ====================================== -->
     <section id="adminPage" class="page hidden">
 
         <div class="admin-layout">
@@ -367,14 +296,13 @@
                 <div class="sidebar-brand">
 
                     <div class="sidebar-logo">
-                        <img src="../image.jpg" alt="ACLC College Mandaue Logo">
+                        <img src="image.jpg" alt="ACLC College Mandaue Logo">
                     </div>
 
                     <h2>ACLC Mandaue</h2>
                     <p>ACeS Sync • 2026-2027</p>
 
                 </div>
-
 
                 <!-- ADMIN NAVIGATION -->
                 <nav class="sidebar-nav" aria-label="Admin navigation">
@@ -397,15 +325,12 @@
 
                 </nav>
 
-
                 <div class="version">
                     Portfolio Edition<br>
                     v2026.27
                 </div>
 
             </aside>
-
-
 
             <!-- ADMIN MAIN CONTENT -->
             <main class="admin-main">
@@ -426,16 +351,13 @@
                         <button
                             type="button"
                             class="logout-button"
-                            onclick="logout()"
-                        >
+                            onclick="logout()">
                             ⇥ Logout
                         </button>
 
                     </div>
 
                 </header>
-
-
 
                 <!-- DASHBOARD STATISTICS -->
                 <div class="stats-grid">
@@ -467,8 +389,6 @@
 
                 </div>
 
-
-
                 <!-- ADMIN CONTENT -->
                 <div class="admin-content">
 
@@ -486,22 +406,28 @@
 
                         </div>
 
-
                         <!-- STUDENT FILTERS -->
                         <div class="filters">
 
                             <input
                                 type="search"
                                 id="searchStudent"
-                                placeholder="⌕ Search Student ID or Name"
-                            >
+                                placeholder="⌕ Search Student ID or Name">
 
                             <select id="filterCourse">
                                 <option value="">All Courses</option>
                                 <option>BSIT</option>
                                 <option>BSCS</option>
                                 <option>BSBA</option>
-                                <option>BSTM</option>
+                                <option>BSA</option>
+                                <option>BSHM<option>
+                                <option>ABM</option>
+                                <option>HUMSS</option>
+                                <option>STEM</option>
+                                <option>Home economics</option>
+                                <option>IA EPAS (Electronics)</option>
+                                <option>ICT Animation</option>
+                                <option>ICT Programming</option>
                             </select>
 
                             <select id="filterYear">
@@ -517,12 +443,9 @@
                             <input
                                 type="search"
                                 id="filterSection"
-                                placeholder="Section"
-                            >
+                                placeholder="Section">
 
                         </div>
-
-
 
                         <!-- STUDENT TABLE -->
                         <div class="table-scroll">
@@ -549,14 +472,11 @@
 
                         </div>
 
-
                         <p id="countText" class="count-text">
                             Showing 0 students
                         </p>
 
                     </section>
-
-
 
                     <!-- ADD STUDENT FORM -->
                     <section class="add-student">
@@ -564,22 +484,17 @@
                         <h2>Add Student</h2>
                         <p>Register an enrolled student.</p>
 
-
                         <label for="studentID">Student ID</label>
                         <input
                             type="text"
                             id="studentID"
-                            placeholder="Example: ACLC-2026-001"
-                        >
-
+                            placeholder="Example: ACLC-2026-001">
 
                         <label for="studentName">Full Name</label>
                         <input
                             type="text"
                             id="studentName"
-                            placeholder="Student full name"
-                        >
-
+                            placeholder="Student full name">
 
                         <label for="studentGrade">Grade / Year</label>
                         <select id="studentGrade">
@@ -590,8 +505,8 @@
                             <option>2nd Year</option>
                             <option>3rd Year</option>
                             <option>4th Year</option>
+                            
                         </select>
-
 
                         <label for="studentCourse">Course</label>
                         <select id="studentCourse">
@@ -599,17 +514,23 @@
                             <option>BSIT</option>
                             <option>BSCS</option>
                             <option>BSBA</option>
-                            <option>BSTM</option>
-                        </select>
+                            <option>BSA</option>
+                            <option>BSHM</option>
+                            <option>ABM</option>
+                            <option>HUMSS</option>
+                            <option>STEM</option>
+                            <option>Home economics</option>
+                            <option>IA EPAS (Electronics)</option>
+                            <option>ICT Animation</option>
+                            <option>ICT Programming</option>
 
+                        </select>
 
                         <label for="studentSectionAdmin">Section</label>
                         <input
                             type="text"
                             id="studentSectionAdmin"
-                            placeholder="Example: 3A"
-                        >
-
+                            placeholder="Example: 3A">
 
                         <label for="tuitionExact">Tuition Fee (₱)</label>
                         <input
@@ -617,9 +538,7 @@
                             id="tuitionExact"
                             placeholder="Enter amount"
                             min="0"
-                            step="0.01"
-                        >
-
+                            step="0.01">
 
                         <label for="discountPercent">
                             Scholar / Honor Discount (%)
@@ -630,9 +549,7 @@
                             placeholder="0"
                             min="0"
                             max="100"
-                            value="0"
-                        >
-
+                            value="0">
 
                         <label for="paidExact">Initial Amount Paid (₱)</label>
                         <input
@@ -641,9 +558,7 @@
                             placeholder="0"
                             min="0"
                             step="0.01"
-                            value="0"
-                        >
-
+                            value="0">
 
                         <!-- TUITION PREVIEW -->
                         <div class="student-preview">
@@ -660,23 +575,20 @@
 
                         </div>
 
-
                         <!-- FORM BUTTONS -->
                         <div class="button-group">
 
                             <button
                                 type="button"
                                 class="gold-button"
-                                onclick="addStudent()"
-                            >
+                                onclick="addStudent()">
                                 + Add Student
                             </button>
 
                             <button
                                 type="button"
                                 class="white-button"
-                                onclick="clearStudentForm()"
-                            >
+                                onclick="clearStudentForm()">
                                 Clear
                             </button>
 
@@ -685,8 +597,6 @@
                     </section>
 
                 </div>
-
-
 
                 <!-- PAYMENT VERIFICATION -->
                 <section class="verification-box" id="paymentVerification">
@@ -714,11 +624,9 @@
 
     </section>
 
-
-
-    <!-- =========================================
+    <!-- =====================================
          STUDENT DASHBOARD
-    ========================================== -->
+    ====================================== -->
     <section id="studentPage" class="page hidden">
 
         <!-- STUDENT HEADER -->
@@ -736,16 +644,13 @@
                 <button
                     type="button"
                     class="logout-button"
-                    onclick="logout()"
-                >
+                    onclick="logout()">
                     ⇥ Logout
                 </button>
 
             </div>
 
         </header>
-
-
 
         <!-- STUDENT MAIN CONTENT -->
         <main class="student-page-content">
@@ -787,8 +692,6 @@
 
                 </article>
 
-
-
                 <!-- TUITION SUMMARY -->
                 <article class="student-card">
 
@@ -828,8 +731,6 @@
 
                 </article>
 
-
-
                 <!-- PAYMENT STATUS -->
                 <article class="student-card">
 
@@ -855,8 +756,6 @@
                     </p>
 
                 </article>
-
-
 
                 <!-- EXAM PERMIT -->
                 <article class="student-card permit-card">
@@ -893,8 +792,6 @@
 
             </div>
 
-
-
             <!-- STUDENT PAYMENT AND HISTORY -->
             <div class="student-bottom-grid">
 
@@ -915,7 +812,6 @@
 
                     </div>
 
-
                     <div class="payment-form-grid">
 
                         <div>
@@ -926,10 +822,8 @@
                             <input
                                 type="text"
                                 id="paymentReference"
-                                placeholder="Enter reference number"
-                            >
+                                placeholder="Enter reference number">
                         </div>
-
 
                         <div>
                             <label for="paymentAmount">
@@ -941,10 +835,8 @@
                                 id="paymentAmount"
                                 placeholder="Enter amount"
                                 min="0.01"
-                                step="0.01"
-                            >
+                                step="0.01">
                         </div>
-
 
                         <div>
                             <label for="paymentMethod">
@@ -952,6 +844,7 @@
                             </label>
 
                             <select id="paymentMethod">
+
                                 <option value="Digital Bank">
                                     ACLC Digital Bank
                                 </option>
@@ -959,30 +852,26 @@
                                 <option value="Cashier">
                                     Cashier
                                 </option>
+
                             </select>
                         </div>
-
 
                         <button
                             type="button"
                             class="gold-button"
-                            onclick="submitPayment()"
-                        >
+                            onclick="submitPayment()">
                             Submit Payment
                         </button>
 
                     </div>
 
-
                     <p
                         id="paymentMessage"
                         class="message"
-                        aria-live="polite"
-                    ></p>
+                        aria-live="polite">
+                    </p>
 
                 </section>
-
-
 
                 <!-- PAYMENT HISTORY -->
                 <section class="student-card history-card">
@@ -1008,19 +897,10 @@
 
     </section>
 
-
-
-    <!-- =========================================
+    <!-- =====================================
          JAVASCRIPT
     ========================================== -->
     <script src="../js/Script.js" defer></script>
-    <script src="../js/menu.js" defer></script>
-    <script src="../js/features.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="js/supabase.js" defer></script>
-
-<script src="js/Script.js" defer></script>
 
 </body>
 </html>

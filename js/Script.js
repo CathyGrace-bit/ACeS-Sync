@@ -1,99 +1,32 @@
-
 /* =====================================================
    ACeS SYNC - ACLC MANDAUE
    Main JavaScript
-   Connected to index.html and style.css
-===================================================== */
-
-
-/* =====================================================
-   1. SYSTEM DATA
+   Supports all separate HTML pages
 ===================================================== */
 
 const STORAGE_KEY = "acesSyncData_v1";
+const SESSION_KEY = "acesSyncSession_v1";
+const SETTINGS_KEY = "acesSyncSettings_v1";
 
 let students = [];
 let currentStudent = null;
 
 
-// Load saved student records
-function loadSavedData() {
-    try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-
-        students = savedData ? JSON.parse(savedData) : [];
-
-        if (!Array.isArray(students)) {
-            students = [];
-        }
-
-        // Make sure older records have the required properties
-        students.forEach(student => {
-            if (!Array.isArray(student.payments)) {
-                student.payments = [];
-            }
-
-            if (student.permit === undefined) {
-                student.permit = null;
-            }
-
-            if (student.paid === undefined) {
-                student.paid = 0;
-            }
-
-            if (student.balance === undefined) {
-                student.balance = Math.max(
-                    Number(student.discountedTuition || 0) -
-                    Number(student.paid || 0),
-                    0
-                );
-            }
-        });
-
-    } catch (error) {
-        console.error("Unable to load saved data:", error);
-        students = [];
-    }
-}
-
-
-// Save student records
-function saveData() {
-    try {
-        localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify(students)
-        );
-    } catch (error) {
-        console.error("Unable to save data:", error);
-        alert("Unable to save your data. Check your browser storage.");
-    }
-}
-
-
 /* =====================================================
-   2. GENERAL FUNCTIONS
+   1. GENERAL FUNCTIONS
 ===================================================== */
 
-// Get HTML element
 function getElement(id) {
     return document.getElementById(id);
 }
 
-
-// Format Philippine peso
 function money(amount) {
-    return "₱" + Number(amount || 0).toLocaleString(
-        "en-PH",
-        {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }
-    );
+    return "₱" + Number(amount || 0).toLocaleString("en-PH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 }
 
-
-// Display a message
 function showMessage(element, message, color = "#b42318") {
     if (!element) return;
 
@@ -101,30 +34,18 @@ function showMessage(element, message, color = "#b42318") {
     element.style.color = color;
 }
 
-
-// Safely create a table cell
 function createCell(value) {
     const cell = document.createElement("td");
-    cell.textContent = value;
+    cell.textContent = value ?? "";
     return cell;
 }
 
-
-// Calculate student payment status
 function getPaymentStatus(student) {
-    if (Number(student.balance) <= 0) {
-        return "Paid";
-    }
-
-    if (Number(student.paid) > 0) {
-        return "Partial";
-    }
-
+    if (Number(student.balance) <= 0) return "Paid";
+    if (Number(student.paid) > 0) return "Partial";
     return "Unpaid";
 }
 
-
-// Get payment percentage
 function getPaymentProgress(student) {
     const tuition = Number(student.discountedTuition || 0);
 
@@ -136,9 +57,106 @@ function getPaymentProgress(student) {
     );
 }
 
+function safeLower(value) {
+    return String(value || "").toLowerCase();
+}
+
 
 /* =====================================================
-   3. LOGIN TABS
+   2. LOCAL STORAGE
+===================================================== */
+
+function loadSavedData() {
+    try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        students = savedData ? JSON.parse(savedData) : [];
+
+        if (!Array.isArray(students)) students = [];
+
+        students.forEach(student => {
+            student.id = String(student.id || "");
+            student.name = String(student.name || "");
+            student.grade = String(student.grade || "");
+            student.course = String(student.course || "");
+            student.section = String(student.section || "");
+
+            student.tuition = Number(student.tuition || 0);
+            student.discount = Number(student.discount || 0);
+            student.discountedTuition = Number(
+                student.discountedTuition ??
+                (student.tuition - student.tuition * student.discount / 100)
+            );
+
+            student.paid = Number(student.paid || 0);
+            student.balance = Number(
+                student.balance ??
+                Math.max(student.discountedTuition - student.paid, 0)
+            );
+
+            if (!Array.isArray(student.payments)) {
+                student.payments = [];
+            }
+
+            if (student.permit === undefined) {
+                student.permit = null;
+            }
+
+            if (student.permitGeneratedAt === undefined) {
+                student.permitGeneratedAt = null;
+            }
+        });
+
+    } catch (error) {
+        console.error("Unable to load saved data:", error);
+        students = [];
+    }
+}
+
+function saveData() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+    } catch (error) {
+        console.error("Unable to save data:", error);
+        alert("Unable to save your data. Check your browser storage.");
+    }
+}
+
+
+/* =====================================================
+   3. SESSION MANAGEMENT
+===================================================== */
+
+function saveSession(role, studentId = null) {
+    const session = {
+        role,
+        studentId,
+        loggedIn: true
+    };
+
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+}
+
+function getSession() {
+    try {
+        return JSON.parse(localStorage.getItem(SESSION_KEY));
+    } catch (error) {
+        return null;
+    }
+}
+
+function clearSession() {
+    localStorage.removeItem(SESSION_KEY);
+}
+
+function logout() {
+    currentStudent = null;
+    clearSession();
+    window.location.href = "index.html";
+}
+
+
+/* =====================================================
+   4. LOGIN TABS
 ===================================================== */
 
 function showLogin(type) {
@@ -146,140 +164,180 @@ function showLogin(type) {
     const admin = getElement("adminLogin");
     const tabs = document.querySelectorAll(".tab");
 
+    if (!student || !admin) return;
+
     if (type === "student") {
         student.classList.remove("hidden");
         admin.classList.add("hidden");
 
-        tabs[0].classList.add("active");
-        tabs[1].classList.remove("active");
-
+        if (tabs[0]) tabs[0].classList.add("active");
+        if (tabs[1]) tabs[1].classList.remove("active");
     } else {
         student.classList.add("hidden");
         admin.classList.remove("hidden");
 
-        tabs[0].classList.remove("active");
-        tabs[1].classList.add("active");
+        if (tabs[0]) tabs[0].classList.remove("active");
+        if (tabs[1]) tabs[1].classList.add("active");
     }
 }
 
 
 /* =====================================================
-   4. TUITION PREVIEW
+   5. ADMIN LOGIN
 ===================================================== */
 
-function updateTuitionPreview() {
-    const tuition = Number(getElement("tuitionExact").value) || 0;
+function adminLogin() {
+    const id = getElement("adminId")?.value.trim();
+    const password = getElement("adminPassword")?.value;
+    const message = getElement("adminLoginMessage");
 
-    let discount = Number(getElement("discountPercent").value) || 0;
-
-    const paid = Number(getElement("paidExact").value) || 0;
-
-    // Keep discount between 0 and 100
-    discount = Math.min(Math.max(discount, 0), 100);
-
-    const discountAmount = tuition * (discount / 100);
-
-    const discountedTuition = tuition - discountAmount;
-
-    const balance = Math.max(discountedTuition - paid, 0);
-
-    getElement("discountedTuition").textContent =
-        money(discountedTuition);
-
-    getElement("initialBalance").textContent =
-        money(balance);
+    // DEMO CREDENTIALS
+    if (id === "admin" && password === "1234") {
+        saveSession("admin");
+        showMessage(message, "");
+        window.location.href = "homepage.html";
+    } else {
+        showMessage(message, "Incorrect Admin ID or Password.");
+    }
 }
 
 
 /* =====================================================
-   5. ADD STUDENT
+   6. STUDENT LOGIN
+===================================================== */
+
+function studentLogin() {
+    const id = getElement("studentId")?.value.trim();
+    const name = getElement("studentNameLogin")?.value.trim();
+    const year = getElement("studentYear")?.value;
+    const course = getElement("studentCourseLogin")?.value;
+    const section = getElement("studentSection")?.value.trim();
+
+    const message = getElement("studentLoginMessage");
+
+    if (!id || !name || !year || !course || !section) {
+        showMessage(message, "Please complete all student information.");
+        return;
+    }
+
+    const student = students.find(s =>
+        safeLower(s.id) === safeLower(id) &&
+        safeLower(s.name) === safeLower(name) &&
+        s.grade === year &&
+        s.course === course &&
+        safeLower(s.section) === safeLower(section)
+    );
+
+    if (!student) {
+        showMessage(
+            message,
+            "Student record not found. Please check your information."
+        );
+        return;
+    }
+
+    saveSession("student", student.id);
+    showMessage(message, "");
+    window.location.href = "student-dashboard.html";
+}
+
+
+/* =====================================================
+   7. TUITION PREVIEW
+===================================================== */
+
+function updateTuitionPreview() {
+    const tuition = Number(getElement("tuitionExact")?.value) || 0;
+    let discount = Number(getElement("discountPercent")?.value) || 0;
+    const paid = Number(getElement("paidExact")?.value) || 0;
+
+    discount = Math.min(Math.max(discount, 0), 100);
+
+    const discountedTuition = tuition - tuition * discount / 100;
+    const balance = Math.max(discountedTuition - paid, 0);
+
+    if (getElement("discountedTuition")) {
+        getElement("discountedTuition").textContent =
+            money(discountedTuition);
+    }
+
+    if (getElement("initialBalance")) {
+        getElement("initialBalance").textContent = money(balance);
+    }
+}
+
+
+/* =====================================================
+   8. ADD STUDENT
 ===================================================== */
 
 function addStudent() {
-    const id = getElement("studentID").value.trim();
-    const name = getElement("studentName").value.trim();
-    const grade = getElement("studentGrade").value;
-    const course = getElement("studentCourse").value;
-    const section = getElement("studentSectionAdmin").value.trim();
+    const id = getElement("studentID")?.value.trim();
+    const name = getElement("studentName")?.value.trim();
+    const grade = getElement("studentGrade")?.value;
+    const course = getElement("studentCourse")?.value;
+    const section = getElement("studentSectionAdmin")?.value.trim();
 
-    const tuition = Number(getElement("tuitionExact").value);
+    const tuition = Number(getElement("tuitionExact")?.value);
+    const discount = Number(getElement("discountPercent")?.value) || 0;
+    const paid = Number(getElement("paidExact")?.value) || 0;
 
-    const discount = Number(getElement("discountPercent").value) || 0;
-
-    const paid = Number(getElement("paidExact").value) || 0;
-
-
-    // Required fields
     if (!id || !name || !grade || !course || !section) {
         alert("Please complete all student information.");
         return;
     }
 
-    // Validate tuition
     if (!Number.isFinite(tuition) || tuition <= 0) {
         alert("Please enter a valid tuition amount.");
         return;
     }
 
-    // Validate discount
     if (discount < 0 || discount > 100) {
         alert("Discount must be between 0% and 100%.");
         return;
     }
 
-    // Validate initial payment
     if (!Number.isFinite(paid) || paid < 0) {
         alert("Please enter a valid initial payment.");
         return;
     }
 
-    const discountAmount = tuition * (discount / 100);
-
-    const discountedTuition = tuition - discountAmount;
+    const discountedTuition = tuition - tuition * discount / 100;
 
     if (paid > discountedTuition) {
         alert("Initial payment cannot exceed the discounted tuition.");
         return;
     }
 
-    // Check duplicate student ID
-    const existingStudent = students.find(student =>
-        student.id.toLowerCase() === id.toLowerCase()
-    );
-
-    if (existingStudent) {
+    if (students.some(s => safeLower(s.id) === safeLower(id))) {
         alert("Student ID already exists.");
         return;
     }
 
-    // Create student record
     const student = {
         id,
         name,
         grade,
         course,
         section,
-
         tuition,
         discount,
         discountedTuition,
-
         paid,
         balance: discountedTuition - paid,
-
         permit: null,
         permitGeneratedAt: null,
-
         payments: []
     };
 
     students.push(student);
-
     saveData();
 
     renderStudents();
     updateStats();
-
+    renderPendingPayments();
+    renderPermitPage();
+    renderReports();
     clearStudentForm();
 
     alert("Student added successfully!");
@@ -287,160 +345,122 @@ function addStudent() {
 
 
 /* =====================================================
-   6. CLEAR STUDENT FORM
+   9. CLEAR STUDENT FORM
 ===================================================== */
 
 function clearStudentForm() {
-    getElement("studentID").value = "";
-    getElement("studentName").value = "";
-    getElement("studentGrade").value = "";
-    getElement("studentCourse").value = "";
-    getElement("studentSectionAdmin").value = "";
+    [
+        "studentID",
+        "studentName",
+        "studentGrade",
+        "studentCourse",
+        "studentSectionAdmin",
+        "tuitionExact"
+    ].forEach(id => {
+        if (getElement(id)) getElement(id).value = "";
+    });
 
-    getElement("tuitionExact").value = "";
-    getElement("discountPercent").value = "0";
-    getElement("paidExact").value = "0";
+    if (getElement("discountPercent")) {
+        getElement("discountPercent").value = "0";
+    }
 
-    getElement("discountedTuition").textContent = money(0);
-    getElement("initialBalance").textContent = money(0);
+    if (getElement("paidExact")) {
+        getElement("paidExact").value = "0";
+    }
+
+    updateTuitionPreview();
 }
 
 
 /* =====================================================
-   7. RENDER STUDENT TABLE
+   10. STUDENT TABLE
 ===================================================== */
 
-function renderStudents() {
+function renderStudentRows(list) {
     const table = getElement("adminTable");
-
     if (!table) return;
 
     table.innerHTML = "";
 
-    students.forEach(student => {
+    list.forEach(student => {
         const row = document.createElement("tr");
 
-        row.appendChild(createCell(student.id));
-        row.appendChild(createCell(student.name));
-        row.appendChild(createCell(student.course));
-        row.appendChild(createCell(student.grade));
-        row.appendChild(createCell(student.section));
-
-        row.appendChild(createCell(money(student.discountedTuition)));
-        row.appendChild(createCell(money(student.paid)));
-        row.appendChild(createCell(money(student.balance)));
-
-        const statusCell = createCell(getPaymentStatus(student));
-
-        const statusBadge = document.createElement("span");
-        statusBadge.className =
-            "table-status " + getPaymentStatus(student).toLowerCase();
-
-        statusBadge.textContent = getPaymentStatus(student);
-
-        statusCell.textContent = "";
-        statusCell.appendChild(statusBadge);
-
-        row.appendChild(statusCell);
-
-        table.appendChild(row);
-    });
-
-    getElement("countText").textContent =
-        "Showing " + students.length + " students";
-}
-
-
-/* =====================================================
-   8. SEARCH AND FILTER STUDENTS
-===================================================== */
-
-function filterStudents() {
-    const search = getElement("searchStudent").value.toLowerCase();
-
-    const course = getElement("filterCourse").value;
-
-    const year = getElement("filterYear").value;
-
-    const section = getElement("filterSection").value.toLowerCase();
-
-    const table = getElement("adminTable");
-
-    table.innerHTML = "";
-
-    const filteredStudents = students.filter(student => {
-        const matchesSearch =
-            student.id.toLowerCase().includes(search) ||
-            student.name.toLowerCase().includes(search);
-
-        const matchesCourse =
-            !course || student.course === course;
-
-        const matchesYear =
-            !year || student.grade === year;
-
-        const matchesSection =
-            !section ||
-            student.section.toLowerCase().includes(section);
-
-        return (
-            matchesSearch &&
-            matchesCourse &&
-            matchesYear &&
-            matchesSection
+        row.append(
+            createCell(student.id),
+            createCell(student.name),
+            createCell(student.course),
+            createCell(student.grade),
+            createCell(student.section),
+            createCell(money(student.discountedTuition)),
+            createCell(money(student.paid)),
+            createCell(money(student.balance))
         );
-    });
-
-    filteredStudents.forEach(student => {
-        const row = document.createElement("tr");
-
-        row.appendChild(createCell(student.id));
-        row.appendChild(createCell(student.name));
-        row.appendChild(createCell(student.course));
-        row.appendChild(createCell(student.grade));
-        row.appendChild(createCell(student.section));
-
-        row.appendChild(createCell(money(student.discountedTuition)));
-        row.appendChild(createCell(money(student.paid)));
-        row.appendChild(createCell(money(student.balance)));
-
-        const status = getPaymentStatus(student);
 
         const statusCell = createCell("");
-
         const badge = document.createElement("span");
+        const status = getPaymentStatus(student);
+
         badge.className = "table-status " + status.toLowerCase();
         badge.textContent = status;
 
         statusCell.appendChild(badge);
         row.appendChild(statusCell);
-
         table.appendChild(row);
     });
 
-    getElement("countText").textContent =
-        "Showing " + filteredStudents.length + " students";
+    if (getElement("countText")) {
+        getElement("countText").textContent =
+            "Showing " + list.length + " students";
+    }
+}
+
+function renderStudents() {
+    renderStudentRows(students);
+}
+
+function filterStudents() {
+    const search = safeLower(getElement("searchStudent")?.value);
+    const course = getElement("filterCourse")?.value || "";
+    const year = getElement("filterYear")?.value || "";
+    const section = safeLower(getElement("filterSection")?.value);
+
+    const filtered = students.filter(student => {
+        const matchesSearch =
+            safeLower(student.id).includes(search) ||
+            safeLower(student.name).includes(search);
+
+        const matchesCourse = !course || student.course === course;
+        const matchesYear = !year || student.grade === year;
+        const matchesSection =
+            !section || safeLower(student.section).includes(section);
+
+        return matchesSearch && matchesCourse &&
+            matchesYear && matchesSection;
+    });
+
+    renderStudentRows(filtered);
 }
 
 
 /* =====================================================
-   9. ADMIN DASHBOARD STATISTICS
+   11. DASHBOARD STATISTICS
 ===================================================== */
 
 function updateStats() {
     const totalPayments = students.reduce(
-        (total, student) =>
-            total + Number(student.paid || 0),
+        (total, student) => total + Number(student.paid || 0),
         0
     );
 
-    const permittedStudents = students.filter(
-        student => student.permit
-    );
+    const permitted = students.filter(student => student.permit);
 
-    getElement("totalStudents").textContent = students.length;
+    if (getElement("totalStudents")) {
+        getElement("totalStudents").textContent = students.length;
+    }
 
-    getElement("totalPayments").textContent = money(totalPayments);
+    if (getElement("totalPayments")) {
+        getElement("totalPayments").textContent = money(totalPayments);
+    }
 
     getElement("permitsCount").textContent =
         permittedStudents.length;
@@ -471,68 +491,32 @@ function updateStats() {
    10. ADMIN LOGIN
 ===================================================== */
 
-async function adminLogin() {
-    const email = getElement("adminId").value.trim();
+function adminLogin() {
+    const id = getElement("adminId").value.trim();
+
     const password = getElement("adminPassword").value;
+
     const message = getElement("adminLoginMessage");
 
-    if (!email || !password) {
-        showMessage(message, "Please enter your email and password.");
-        return;
-    }
-
-    try {
-        showMessage(message, "Logging in...", "#93600a");
-
-        // Sign in using Supabase Authentication
-        const { data, error } =
-            await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-
-        if (error) throw error;
-
-        // Check whether this account has the admin role
-        const { data: roleData, error: roleError } =
-            await supabase
-                .from("user_roles")
-                .select("role")
-                .eq("user_id", data.user.id)
-                .maybeSingle();
-
-        if (roleError) throw roleError;
-
-        if (!roleData || roleData.role !== "admin") {
-            await supabase.auth.signOut();
-
-            showMessage(
-                message,
-                "Access denied. This account is not an admin."
-            );
-
-            return;
-        }
-
-        // Open Admin Dashboard
+    // DEMO LOGIN ONLY
+    if (id === "admin" && password === "1234") {
         getElement("loginPage").classList.add("hidden");
+
         getElement("studentPage").classList.add("hidden");
+
         getElement("adminPage").classList.remove("hidden");
 
         showMessage(message, "");
 
-        // We'll connect these dashboard functions to Supabase next.
-        await loadAdminStudentsFromSupabase();
+        renderStudents();
+        updateStats();
+        renderPendingPayments();
 
-    } catch (error) {
-        console.error("Admin login error:", error);
-
-        showMessage(
-            message,
-            error.message || "Unable to log in."
-        );
+    } else {
+        showMessage(message, "Incorrect Admin ID or Password.");
     }
 }
+
 
 /* =====================================================
    11. STUDENT LOGIN
@@ -585,7 +569,7 @@ function studentLogin() {
 
 
 /* =====================================================
-   12. LOAD STUDENT DASHBOARD
+   12. STUDENT DASHBOARD
 ===================================================== */
 
 function loadStudentDashboard() {
@@ -593,34 +577,22 @@ function loadStudentDashboard() {
 
     const student = currentStudent;
 
-    // Student information
-    getElement("displayStudentName").textContent = student.name;
+    const setText = (id, value) => {
+        if (getElement(id)) getElement(id).textContent = value;
+    };
 
-    getElement("displayStudentId").textContent = student.id;
+    setText("displayStudentName", student.name);
+    setText("displayStudentId", student.id);
+    setText("displayStudentYear", student.grade);
+    setText("displayStudentCourse", student.course);
+    setText("displayStudentSection", student.section);
 
-    getElement("displayStudentYear").textContent = student.grade;
+    setText("studentTuition", money(student.tuition));
+    setText("studentDiscount", student.discount + "%");
+    setText("studentDiscountedTuition", money(student.discountedTuition));
+    setText("studentPaid", money(student.paid));
+    setText("studentBalance", money(student.balance));
 
-    getElement("displayStudentCourse").textContent = student.course;
-
-    getElement("displayStudentSection").textContent = student.section;
-
-
-    // Tuition information
-    getElement("studentTuition").textContent = money(student.tuition);
-
-    getElement("studentDiscount").textContent = student.discount + "%";
-
-    getElement("studentDiscountedTuition").textContent =
-        money(student.discountedTuition);
-
-
-    // Payment information
-    getElement("studentPaid").textContent = money(student.paid);
-
-    getElement("studentBalance").textContent = money(student.balance);
-
-
-    // Payment status
     let status = "No Payment";
 
     if (student.balance <= 0) {
@@ -629,33 +601,27 @@ function loadStudentDashboard() {
         status = "Partially Paid";
     }
 
-    getElement("paymentStatus").textContent = status;
+    setText("paymentStatus", status);
 
-
-    // Payment progress
     const progress = getPaymentProgress(student);
 
-    getElement("paymentProgress").style.width = progress + "%";
+    if (getElement("paymentProgress")) {
+        getElement("paymentProgress").style.width = progress + "%";
+    }
 
-    getElement("progressText").textContent =
-        progress.toFixed(1) + "% paid";
+    setText("progressText", progress.toFixed(1) + "% paid");
 
-
-    // Permit information
     if (student.permit) {
-        getElement("permitStatus").textContent = "Generated";
-
-        getElement("studentPermit").textContent = student.permit;
-
-        getElement("permitNote").textContent =
-            "Your exam permit is ready.";
+        setText("permitStatus", "Generated");
+        setText("studentPermit", student.permit);
+        setText("permitNote", "Your exam permit is ready.");
     } else {
-        getElement("permitStatus").textContent = "Not Yet Generated";
-
-        getElement("studentPermit").textContent = "—";
-
-        getElement("permitNote").textContent =
-            "Your permit will be generated after payment verification.";
+        setText("permitStatus", "Not Yet Generated");
+        setText("studentPermit", "—");
+        setText(
+            "permitNote",
+            "Your permit will be generated after payment verification."
+        );
     }
 
     renderPaymentHistory();
@@ -663,30 +629,25 @@ function loadStudentDashboard() {
 
 
 /* =====================================================
-   13. STUDENT PAYMENT HISTORY
+   13. PAYMENT HISTORY
 ===================================================== */
 
 function renderPaymentHistory() {
     const history = getElement("paymentHistory");
-
     if (!history) return;
 
     history.innerHTML = "";
 
     if (!currentStudent || currentStudent.payments.length === 0) {
         const empty = document.createElement("p");
-
         empty.className = "empty-state";
         empty.textContent = "No payment history yet.";
-
         history.appendChild(empty);
-
         return;
     }
 
     currentStudent.payments.forEach(payment => {
         const item = document.createElement("div");
-
         item.className = "history-item";
 
         const reference = document.createElement("strong");
@@ -707,74 +668,60 @@ function renderPaymentHistory() {
             : "";
 
         item.append(reference, amount, method, status, date);
-
         history.appendChild(item);
     });
 }
 
 
 /* =====================================================
-   14. SUBMIT STUDENT PAYMENT
+   14. SUBMIT PAYMENT
 ===================================================== */
 
 function submitPayment() {
     if (!currentStudent) return;
 
-    const reference = getElement("paymentReference").value.trim();
-
-    const amount = Number(getElement("paymentAmount").value);
-
-    const method = getElement("paymentMethod").value;
-
+    const reference = getElement("paymentReference")?.value.trim();
+    const amount = Number(getElement("paymentAmount")?.value);
+    const method = getElement("paymentMethod")?.value;
     const message = getElement("paymentMessage");
 
-
-    if (!reference || !Number.isFinite(amount) || amount <= 0) {
+    if (!reference || !Number.isFinite(amount) || amount <= 0 || !method) {
         showMessage(
             message,
-            "Please enter a valid reference number and payment amount."
+            "Please enter a valid reference, amount, and payment method."
         );
-
         return;
     }
 
-    // Prevent payment exceeding the remaining balance
     if (amount > currentStudent.balance) {
         showMessage(
             message,
             "Payment cannot exceed your remaining balance."
         );
-
         return;
     }
 
-    // Check duplicate reference number across all students
-    const duplicateReference = students.some(student =>
+    const duplicate = students.some(student =>
         student.payments.some(payment =>
-            payment.reference.toLowerCase() === reference.toLowerCase()
+            safeLower(payment.reference) === safeLower(reference)
         )
     );
 
-    if (duplicateReference) {
+    if (duplicate) {
         showMessage(
             message,
             "This payment reference number has already been submitted."
         );
-
         return;
     }
 
-    const payment = {
+    currentStudent.payments.push({
         reference,
         amount,
         method,
-
         status: "Pending Verification",
-
         date: new Date().toISOString()
-    };
-
-    currentStudent.payments.push(payment);
+    });
 
     saveData();
 
@@ -788,21 +735,87 @@ function submitPayment() {
     );
 
     renderPaymentHistory();
-    renderPendingPayments();
 }
 
 
 /* =====================================================
-   15. VERIFY PAYMENT
+   15. PENDING PAYMENTS
+===================================================== */
+
+function renderPendingPayments() {
+    const box = getElement("pendingPayments");
+    if (!box) return;
+
+    box.innerHTML = "";
+    let pendingCount = 0;
+
+    students.forEach(student => {
+        student.payments.forEach((payment, index) => {
+            if (payment.status !== "Verified") {
+                pendingCount++;
+
+                const item = document.createElement("div");
+                item.className = "payment-item";
+
+                const info = document.createElement("div");
+                info.className = "payment-item-info";
+
+                const details = [
+                    ["strong", student.name],
+                    ["span", "Student ID: " + student.id],
+                    ["span", "Reference: " + payment.reference],
+                    ["strong", money(payment.amount)],
+                    ["span", "Method: " + payment.method],
+                    ["span", payment.status]
+                ];
+
+                details.forEach(([tag, value]) => {
+                    const element = document.createElement(tag);
+                    element.textContent = value;
+                    info.appendChild(element);
+                });
+
+                const action = document.createElement("div");
+                action.className = "payment-item-action";
+
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "gold-button";
+                button.textContent = "Verify Payment";
+
+                button.addEventListener("click", () => {
+                    verifyPayment(student.id, index);
+                });
+
+                action.appendChild(button);
+                item.append(info, action);
+                box.appendChild(item);
+            }
+        });
+    });
+
+    if (pendingCount === 0) {
+        const empty = document.createElement("p");
+        empty.className = "empty-state";
+        empty.textContent = "No pending payments.";
+        box.appendChild(empty);
+    }
+
+    if (getElement("pendingCount")) {
+        getElement("pendingCount").textContent = pendingCount;
+    }
+}
+
+
+/* =====================================================
+   16. VERIFY PAYMENT
 ===================================================== */
 
 function verifyPayment(studentId, paymentIndex) {
     const student = students.find(s => s.id === studentId);
-
     if (!student) return;
 
     const payment = student.payments[paymentIndex];
-
     if (!payment) return;
 
     if (payment.status === "Verified") {
@@ -810,28 +823,20 @@ function verifyPayment(studentId, paymentIndex) {
         return;
     }
 
-    // Check remaining balance again before verification
-    if (payment.amount > student.balance) {
+    if (Number(payment.amount) > Number(student.balance)) {
         alert("This payment exceeds the student's remaining balance.");
         return;
     }
 
-    // Mark payment as verified
     payment.status = "Verified";
-
     payment.verifiedAt = new Date().toISOString();
 
-    // Update student's payment totals
-    student.paid += Number(payment.amount);
-
+    student.paid = Number(student.paid || 0) + Number(payment.amount);
     student.balance = Math.max(
-        student.discountedTuition - student.paid,
+        Number(student.discountedTuition) - student.paid,
         0
     );
 
-
-    // Generate permit after the first verified payment.
-    // This follows the rule in your original JavaScript.
     if (!student.permit) {
         student.permit =
             "ACLC-" +
@@ -847,6 +852,8 @@ function verifyPayment(studentId, paymentIndex) {
     renderStudents();
     updateStats();
     renderPendingPayments();
+    renderPermitPage();
+    renderReports();
 
     if (currentStudent && currentStudent.id === student.id) {
         loadStudentDashboard();
@@ -857,183 +864,446 @@ function verifyPayment(studentId, paymentIndex) {
 
 
 /* =====================================================
-   16. ADMIN PENDING PAYMENTS
+   17. PAYMENTS PAGE
 ===================================================== */
 
-function renderPendingPayments() {
-    const box = getElement("pendingPayments");
-
-    if (!box) return;
-
-    box.innerHTML = "";
-
-    let found = false;
-
-    students.forEach(student => {
-        student.payments.forEach((payment, index) => {
-
-            if (payment.status !== "Verified") {
-                found = true;
-
-                const item = document.createElement("div");
-
-                item.className = "payment-item";
-
-
-                const info = document.createElement("div");
-
-                info.className = "payment-item-info";
-
-
-                const studentName = document.createElement("strong");
-                studentName.textContent = student.name;
-
-                const studentId = document.createElement("span");
-                studentId.textContent = "Student ID: " + student.id;
-
-                const reference = document.createElement("span");
-                reference.textContent = "Reference: " + payment.reference;
-
-                const amount = document.createElement("strong");
-                amount.textContent = money(payment.amount);
-
-                const method = document.createElement("span");
-                method.textContent = "Method: " + payment.method;
-
-                const status = document.createElement("span");
-                status.textContent = payment.status;
-
-
-                info.append(
-                    studentName,
-                    studentId,
-                    reference,
-                    amount,
-                    method,
-                    status
-                );
-
-
-                const action = document.createElement("div");
-
-                action.className = "payment-item-action";
-
-
-                const verifyButton = document.createElement("button");
-
-                verifyButton.type = "button";
-                verifyButton.className = "gold-button";
-                verifyButton.textContent = "Verify Payment";
-
-                verifyButton.addEventListener("click", () => {
-                    verifyPayment(student.id, index);
-                });
-
-
-                action.appendChild(verifyButton);
-
-                item.append(info, action);
-
-                box.appendChild(item);
-            }
-        });
-    });
-
-
-    if (!found) {
-        const empty = document.createElement("p");
-
-        empty.className = "empty-state";
-        empty.textContent = "No pending payments.";
-
-        box.appendChild(empty);
-    }
-}
-
-
-// Refresh payment verification
-function updatePaymentVerification() {
+function initializePaymentsPage() {
+    updateStats();
     renderPendingPayments();
 }
 
 
 /* =====================================================
-   17. LOGOUT
+   18. EXAM PERMITS PAGE
 ===================================================== */
 
-function logout() {
-    currentStudent = null;
+function renderPermitPage() {
+    const table = getElement("permitTable");
+    if (!table) return;
 
-    getElement("adminPage").classList.add("hidden");
+    const search = safeLower(getElement("permitSearch")?.value);
+    const filter = getElement("permitFilter")?.value || "";
 
-    getElement("studentPage").classList.add("hidden");
+    const filtered = students.filter(student => {
+        const matchesSearch =
+            safeLower(student.id).includes(search) ||
+            safeLower(student.name).includes(search);
 
-    getElement("loginPage").classList.remove("hidden");
+        const hasPermit = Boolean(student.permit);
 
-    // Clear login messages
-    showMessage(getElement("adminLoginMessage"), "");
-    showMessage(getElement("studentLoginMessage"), "");
+        const matchesFilter =
+            !filter ||
+            (filter === "generated" && hasPermit) ||
+            (filter === "not-generated" && !hasPermit);
 
-    // Clear admin password
-    getElement("adminPassword").value = "";
+        return matchesSearch && matchesFilter;
+    });
 
-    // Return to student login tab
-    showLogin("student");
+    table.innerHTML = "";
+
+    filtered.forEach(student => {
+        const row = document.createElement("tr");
+
+        row.append(
+            createCell(student.id),
+            createCell(student.name),
+            createCell(student.course),
+            createCell(student.grade),
+            createCell(student.section),
+            createCell(student.permit || "—"),
+            createCell(
+                student.permitGeneratedAt
+                    ? new Date(student.permitGeneratedAt).toLocaleDateString("en-PH")
+                    : "—"
+            ),
+            createCell(student.permit ? "Generated" : "Not Generated")
+        );
+
+        table.appendChild(row);
+    });
+
+    const permitted = students.filter(s => s.permit).length;
+
+    if (getElement("totalStudents")) {
+        getElement("totalStudents").textContent = students.length;
+    }
+
+    if (getElement("permitsCount")) {
+        getElement("permitsCount").textContent = permitted;
+    }
+
+    if (getElement("withoutPermitCount")) {
+        getElement("withoutPermitCount").textContent =
+            students.length - permitted;
+    }
+
+    if (getElement("permitCountText")) {
+        getElement("permitCountText").textContent =
+            "Showing " + filtered.length + " students";
+    }
 }
 
 
 /* =====================================================
-   18. INITIALIZE SYSTEM
+   19. REPORTS PAGE
+===================================================== */
+
+function renderReports() {
+    const table = getElement("reportTable");
+    if (!table) return;
+
+    const search = safeLower(getElement("reportSearch")?.value);
+    const statusFilter = getElement("reportStatusFilter")?.value || "";
+
+    const totalTuition = students.reduce(
+        (sum, s) => sum + Number(s.discountedTuition || 0),
+        0
+    );
+
+    const totalCollected = students.reduce(
+        (sum, s) => sum + Number(s.paid || 0),
+        0
+    );
+
+    const totalBalance = students.reduce(
+        (sum, s) => sum + Number(s.balance || 0),
+        0
+    );
+
+    const paidCount = students.filter(s => getPaymentStatus(s) === "Paid").length;
+    const partialCount = students.filter(s => getPaymentStatus(s) === "Partial").length;
+    const unpaidCount = students.filter(s => getPaymentStatus(s) === "Unpaid").length;
+
+    const setText = (id, value) => {
+        if (getElement(id)) getElement(id).textContent = value;
+    };
+
+    setText("reportTotalStudents", students.length);
+    setText("reportTotalTuition", money(totalTuition));
+    setText("reportTotalCollected", money(totalCollected));
+    setText("reportTotalBalance", money(totalBalance));
+    setText("reportFullyPaid", paidCount);
+    setText("reportPartiallyPaid", partialCount);
+    setText("reportUnpaid", unpaidCount);
+
+    const filtered = students.filter(student => {
+        const matchesSearch =
+            safeLower(student.id).includes(search) ||
+            safeLower(student.name).includes(search);
+
+        const matchesStatus =
+            !statusFilter || getPaymentStatus(student) === statusFilter;
+
+        return matchesSearch && matchesStatus;
+    });
+
+    table.innerHTML = "";
+
+    filtered.forEach(student => {
+        const row = document.createElement("tr");
+
+        row.append(
+            createCell(student.id),
+            createCell(student.name),
+            createCell(student.course),
+            createCell(student.grade),
+            createCell(money(student.tuition)),
+            createCell(student.discount + "%"),
+            createCell(money(student.discountedTuition)),
+            createCell(money(student.paid)),
+            createCell(money(student.balance)),
+            createCell(getPaymentStatus(student))
+        );
+
+        table.appendChild(row);
+    });
+
+    setText("reportCountText", "Showing " + filtered.length + " students");
+}
+
+
+/* =====================================================
+   20. SETTINGS PAGE
+===================================================== */
+
+function loadSettings() {
+    let settings = {};
+
+    try {
+        settings = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+    } catch (error) {
+        settings = {};
+    }
+
+    if (getElement("schoolName") && settings.schoolName) {
+        getElement("schoolName").value = settings.schoolName;
+    }
+
+    if (getElement("systemName") && settings.systemName) {
+        getElement("systemName").value = settings.systemName;
+    }
+
+    if (getElement("campusName") && settings.campusName) {
+        getElement("campusName").value = settings.campusName;
+    }
+
+    if (getElement("academicYear") && settings.academicYear) {
+        getElement("academicYear").value = settings.academicYear;
+    }
+}
+
+function saveSettings() {
+    const settings = {
+        schoolName: getElement("schoolName")?.value.trim() || "",
+        systemName: getElement("systemName")?.value.trim() || "",
+        campusName: getElement("campusName")?.value.trim() || "",
+        academicYear: getElement("academicYear")?.value.trim() || ""
+    };
+
+    try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+
+        showMessage(
+            getElement("settingsMessage"),
+            "Settings saved successfully!",
+            "#16845b"
+        );
+    } catch (error) {
+        showMessage(
+            getElement("settingsMessage"),
+            "Unable to save settings."
+        );
+    }
+}
+
+
+/* =====================================================
+   21. EXPORT STUDENT DATA
+===================================================== */
+
+function exportStudentData() {
+    if (students.length === 0) {
+        alert("There are no student records to export.");
+        return;
+    }
+
+    const headers = [
+        "Student ID",
+        "Name",
+        "Course",
+        "Year",
+        "Section",
+        "Tuition",
+        "Discount",
+        "Discounted Tuition",
+        "Paid",
+        "Balance",
+        "Payment Status",
+        "Permit Number"
+    ];
+
+    const rows = students.map(student => [
+        student.id,
+        student.name,
+        student.course,
+        student.grade,
+        student.section,
+        student.tuition,
+        student.discount + "%",
+        student.discountedTuition,
+        student.paid,
+        student.balance,
+        getPaymentStatus(student),
+        student.permit || ""
+    ]);
+
+    const escapeCSV = value =>
+        '"' + String(value ?? "").replace(/"/g, '""') + '"';
+
+    const csv = [headers, ...rows]
+        .map(row => row.map(escapeCSV).join(","))
+        .join("\r\n");
+
+    const blob = new Blob(["\uFEFF" + csv], {
+        type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "ACeS-Sync-Student-Records.csv";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+}
+
+
+/* =====================================================
+   22. PAGE ACCESS CONTROL
+===================================================== */
+
+function protectPage() {
+    const session = getSession();
+    const page = window.location.pathname.split("/").pop().toLowerCase();
+
+    const isLoginPage = page === "" || page === "index.html";
+    const isStudentPage = page === "student-dashboard.html";
+
+    if (isLoginPage) {
+        if (session?.loggedIn) {
+            if (session.role === "admin") {
+                window.location.href = "homepage.html";
+                return false;
+            }
+
+            if (session.role === "student") {
+                window.location.href = "student-dashboard.html";
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    if (!session || !session.loggedIn) {
+        window.location.href = "index.html";
+        return false;
+    }
+
+    if (isStudentPage && session.role !== "student") {
+        window.location.href = "homepage.html";
+        return false;
+    }
+
+    if (!isStudentPage && session.role !== "admin") {
+        window.location.href = "student-dashboard.html";
+        return false;
+    }
+
+    if (session.role === "student") {
+        currentStudent = students.find(
+            student => student.id === session.studentId
+        );
+
+        if (!currentStudent) {
+            alert("Student record not found. Please login again.");
+            clearSession();
+            window.location.href = "index.html";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+/* =====================================================
+   23. INITIALIZE ALL PAGES
 ===================================================== */
 
 function initializeSystem() {
     loadSavedData();
 
-    // Tuition preview listeners
-    getElement("tuitionExact").addEventListener(
-        "input",
-        updateTuitionPreview
-    );
+    if (!protectPage()) return;
 
-    getElement("discountPercent").addEventListener(
-        "input",
-        updateTuitionPreview
-    );
+    const page = window.location.pathname.split("/").pop().toLowerCase();
 
-    getElement("paidExact").addEventListener(
-        "input",
-        updateTuitionPreview
-    );
+    // LOGIN PAGE
+    if (page === "" || page === "index.html") {
+        showLogin("student");
+        return;
+    }
 
+    // ADMIN DASHBOARD
+    if (page === "homepage.html") {
 
-    // Student search and filter listeners
-    getElement("searchStudent").addEventListener(
-        "input",
-        filterStudents
-    );
+    if (getElement("adminPage")) {
+        getElement("adminPage").classList.remove("hidden");
+    }
 
-    getElement("filterCourse").addEventListener(
-        "change",
-        filterStudents
-    );
+    if (getElement("studentPage")) {
+        getElement("studentPage").classList.add("hidden");
+    }
 
-    getElement("filterYear").addEventListener(
-        "change",
-        filterStudents
-    );
-
-    getElement("filterSection").addEventListener(
-        "input",
-        filterStudents
-    );
-
-
-    // Initial dashboard display
     renderStudents();
     updateStats();
-    updateTuitionPreview();
+    renderPendingPayments();
+}
+
+    // STUDENTS PAGE
+    if (page === "students.html") {
+        renderStudents();
+        updateTuitionPreview();
+    }
+
+    // PAYMENTS PAGE
+    if (page === "payments.html") {
+        initializePaymentsPage();
+    }
+
+    // PERMITS PAGE
+    if (page === "permits.html") {
+        renderPermitPage();
+    }
+
+    // REPORTS PAGE
+    if (page === "reports.html") {
+        renderReports();
+    }
+
+    // SETTINGS PAGE
+    if (page === "settings.html") {
+        loadSettings();
+    }
+
+    // STUDENT DASHBOARD
+    if (page === "student-dashboard.html") {
+        loadStudentDashboard();
+    }
+
+    // TUITION INPUT LISTENERS
+    ["tuitionExact", "discountPercent", "paidExact"].forEach(id => {
+        if (getElement(id)) {
+            getElement(id).addEventListener("input", updateTuitionPreview);
+        }
+    });
+
+    // STUDENT SEARCH AND FILTERS
+    ["searchStudent", "filterSection"].forEach(id => {
+        if (getElement(id)) {
+            getElement(id).addEventListener("input", filterStudents);
+        }
+    });
+
+    ["filterCourse", "filterYear"].forEach(id => {
+        if (getElement(id)) {
+            getElement(id).addEventListener("change", filterStudents);
+        }
+    });
+
+    // PERMIT SEARCH AND FILTER
+    if (getElement("permitSearch")) {
+        getElement("permitSearch").addEventListener("input", renderPermitPage);
+    }
+
+    if (getElement("permitFilter")) {
+        getElement("permitFilter").addEventListener("change", renderPermitPage);
+    }
+
+    // REPORT SEARCH AND FILTER
+    if (getElement("reportSearch")) {
+        getElement("reportSearch").addEventListener("input", renderReports);
+    }
+
+    if (getElement("reportStatusFilter")) {
+        getElement("reportStatusFilter").addEventListener("change", renderReports);
+    }
 }
 
 
-// Start system after HTML loads
+// Start after HTML loads
 document.addEventListener("DOMContentLoaded", initializeSystem);

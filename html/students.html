@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students | ACeS Sync</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/features.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="image.jpg" alt="ACLC Logo">
+            <div>
+                <h2>ACeS Sync</h2>
+                <small>ACLC Mandaue</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="homepage.html">Dashboard</a>
+            <a href="students.html" class="active">Students</a>
+            <a href="payments.html">Payments</a>
+            <a href="permits.html">Exam Permits</a>
+            <a href="reports.html">Reports</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+
+        <button class="logout-button" onclick="logout()">Logout</button>
+    </aside>
+
+    <main class="admin-main">
+
+        <header class="page-header">
+            <div>
+                <h1>Student Management</h1>
+                <p>Manage student profiles and tuition information.</p>
+            </div>
+        </header>
+
+        <section class="admin-content">
+
+            <div class="table-box">
+                <h2>Student Records</h2>
+
+                <div class="filter-row">
+                    <input type="text" id="searchStudent"
+                        placeholder="Search student ID or name">
+
+                    <select id="filterCourse">
+                        <option value="">All Courses</option>
+                        <option value="BSIT">BSIT</option>
+                        <option value="BSBA">BSBA</option>
+                        <option value="BSED">BSED</option>
+                        <option value="BEED">BEED</option>
+                        <option value="HM">HM</option>
+                    </select>
+
+                    <select id="filterYear">
+                        <option value="">All Year Levels</option>
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
+                        <option value="4th Year">4th Year</option>
+                    </select>
+
+                    <input type="text" id="filterSection"
+                        placeholder="Filter section">
+                </div>
+
+                <p id="countText">Showing 0 students</p>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Course</th>
+                                <th>Year</th>
+                                <th>Section</th>
+                                <th>Tuition</th>
+                                <th>Paid</th>
+                                <th>Balance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="add-student">
+                <h2>Add New Student</h2>
+
+                <div class="form-grid">
+                    <div>
+                        <label>Student ID</label>
+                        <input type="text" id="studentID">
+                    </div>
+
+                    <div>
+                        <label>Full Name</label>
+                        <input type="text" id="studentName">
+                    </div>
+
+                    <div>
+                        <label>Year Level</label>
+                        <select id="studentGrade">
+                            <option value="">Select Year</option>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Course</label>
+                        <select id="studentCourse">
+                            <option value="">Select Course</option>
+                            <option value="BSIT">BSIT</option>
+                            <option value="BSBA">BSBA</option>
+                            <option value="BSED">BSED</option>
+                            <option value="BEED">BEED</option>
+                            <option value="HM">HM</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Section</label>
+                        <input type="text" id="studentSectionAdmin">
+                    </div>
+
+                    <div>
+                        <label>Tuition Fee</label>
+                        <input type="number" id="tuitionExact" min="0">
+                    </div>
+
+                    <div>
+                        <label>Discount (%)</label>
+                        <input type="number" id="discountPercent"
+                            min="0" max="100" value="0">
+                    </div>
+
+                    <div>
+                        <label>Initial Payment</label>
+                        <input type="number" id="paidExact" min="0" value="0">
+                    </div>
+                </div>
+
+                <div class="tuition-preview">
+                    <p>Discounted Tuition:
+                        <strong id="discountedTuition">₱0.00</strong>
+                    </p>
+                    <p>Initial Balance:
+                        <strong id="initialBalance">₱0.00</strong>
+                    </p>
+                </div>
+
+                <button class="gold-button" onclick="addStudent()">
+                    Add Student
+                </button>
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<script src="js/Script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | ACeS Sync</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/features.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <img src="image.jpg" alt="ACLC Logo">
+            <div>
+                <h2>ACeS Sync</h2>
+                <small>ACLC Mandaue</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="homepage.html">Dashboard</a>
+            <a href="students.html">Students</a>
+            <a href="payments.html">Payments</a>
+            <a href="permits.html">Exam Permits</a>
+            <a href="reports.html">Reports</a>
+            <a href="settings.html" class="active">Settings</a>
+        </nav>
+
+        <button class="logout-button" onclick="logout()">
+            Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <header class="page-header">
+            <div>
+                <h1>System Settings</h1>
+                <p>Manage your ACeS Sync system information and preferences.</p>
+            </div>
+        </header>
+
+
+        <section class="admin-content">
+
+            <!-- SCHOOL INFORMATION -->
+            <div class="table-box">
+
+                <h2>School Information</h2>
+
+                <div class="form-grid">
+
+                    <div>
+                        <label>School Name</label>
+                        <input
+                            type="text"
+                            id="schoolName"
+                            value="Asian College of Technology - ACLC Mandaue"
+                        >
+                    </div>
+
+                    <div>
+                        <label>System Name</label>
+                        <input
+                            type="text"
+                            id="systemName"
+                            value="ACeS Sync"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Campus</label>
+                        <input
+                            type="text"
+                            id="campusName"
+                            value="ACLC Mandaue"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Academic Year</label>
+                        <input
+                            type="text"
+                            id="academicYear"
+                            placeholder="Example: 2026-2027"
+                        >
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="gold-button"
+                    onclick="saveSettings()"
+                >
+                    Save Settings
+                </button>
+
+                <p id="settingsMessage"></p>
+
+            </div>
+
+
+            <!-- ADMINISTRATOR INFORMATION -->
+            <div class="table-box">
+
+                <h2>Administrator Information</h2>
+
+                <div class="form-grid">
+
+                    <div>
+                        <label>Administrator Username</label>
+                        <input type="text" value="admin" disabled>
+                    </div>
+
+                    <div>
+                        <label>Account Type</label>
+                        <input type="text" value="System Administrator" disabled>
+                    </div>
+
+                </div>
+
+                <p>
+                    Administrator account settings are currently managed
+                    through the system configuration.
+                </p>
+
+            </div>
+
+
+            <!-- DATA MANAGEMENT -->
+            <div class="table-box">
+
+                <h2>Data Management</h2>
+
+                <p>
+                    Your student records, payment history, and exam permit
+                    information are currently stored in this browser.
+                </p>
+
+                <p>
+                    Clearing browser storage may permanently remove these
+                    records from this device.
+                </p>
+
+                <button
+                    type="button"
+                    class="gold-button"
+                    onclick="exportStudentData()"
+                >
+                    Export Student Data
+                </button>
+
+            </div>
+
+
+            <!-- SYSTEM INFORMATION -->
+            <div class="table-box">
+
+                <h2>About ACeS Sync</h2>
+
+                <p><strong>System:</strong> ACeS Sync</p>
+                <p><strong>Institution:</strong> ACLC Mandaue</p>
+                <p><strong>Purpose:</strong> Student and School Fee Management</p>
+                <p><strong>Version:</strong> 1.0</p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="js/Script.js" defer></script>
+
+</body>
+</html>
+```

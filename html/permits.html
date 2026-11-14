@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Permits | ACeS Sync</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/features.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <img src="image.jpg" alt="ACLC Logo">
+            <div>
+                <h2>ACeS Sync</h2>
+                <small>ACLC Mandaue</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="homepage.html">Dashboard</a>
+            <a href="students.html">Students</a>
+            <a href="payments.html">Payments</a>
+            <a href="permits.html" class="active">Exam Permits</a>
+            <a href="reports.html">Reports</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+
+        <button class="logout-button" onclick="logout()">
+            Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <header class="page-header">
+            <div>
+                <h1>Exam Permits</h1>
+                <p>View and manage generated student examination permits.</p>
+            </div>
+        </header>
+
+
+        <section class="admin-content">
+
+            <!-- PERMIT SUMMARY -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div>
+                        <p>Total Students</p>
+                        <h2 id="totalStudents">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <p>Generated Permits</p>
+                        <h2 id="permitsCount">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <p>Students Without Permits</p>
+                        <h2 id="withoutPermitCount">0</h2>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- PERMIT TABLE -->
+            <div class="table-box">
+
+                <h2>Student Permit Records</h2>
+
+                <div class="filter-row">
+
+                    <input
+                        type="text"
+                        id="permitSearch"
+                        placeholder="Search student ID or name"
+                    >
+
+                    <select id="permitFilter">
+                        <option value="">All Students</option>
+                        <option value="generated">Generated</option>
+                        <option value="not-generated">Not Generated</option>
+                    </select>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Course</th>
+                                <th>Year</th>
+                                <th>Section</th>
+                                <th>Permit Number</th>
+                                <th>Date Generated</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="permitTable"></tbody>
+
+                    </table>
+
+                </div>
+
+                <p id="permitCountText">Showing 0 students</p>
+
+            </div>
+
+
+            <!-- PERMIT INFORMATION -->
+            <div class="table-box">
+
+                <h2>Permit Information</h2>
+
+                <p>
+                    Exam permits are automatically generated after an
+                    administrator verifies a student's first payment.
+                </p>
+
+                <p>
+                    Students can view their generated permit through
+                    their student dashboard.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="js/Script.js" defer></script>
+
+</body>
+</html>
+```

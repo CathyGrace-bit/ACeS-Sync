@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard | ACeS Sync</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/features.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- STUDENT SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <img src="image.jpg" alt="ACLC Logo">
+
+            <div>
+                <h2>ACeS Sync</h2>
+                <small>ACLC Mandaue</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#studentOverview" class="active">My Dashboard</a>
+            <a href="#studentTuitionSection">Tuition Details</a>
+            <a href="#studentPaymentSection">Submit Payment</a>
+            <a href="#studentHistorySection">Payment History</a>
+            <a href="#studentPermitSection">Exam Permit</a>
+        </nav>
+
+        <button class="logout-button" onclick="logout()">
+            Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <!-- HEADER -->
+        <header class="page-header" id="studentOverview">
+            <div>
+                <h1>Student Dashboard</h1>
+                <p>Welcome to your ACeS Sync student portal.</p>
+            </div>
+        </header>
+
+
+        <section class="admin-content">
+
+            <!-- STUDENT PROFILE -->
+            <div class="table-box">
+
+                <h2>My Student Information</h2>
+
+                <div class="student-grid">
+
+                    <div class="student-card">
+                        <p>Full Name</p>
+                        <h3 id="displayStudentName">Loading...</h3>
+                    </div>
+
+                    <div class="student-card">
+                        <p>Student ID</p>
+                        <h3 id="displayStudentId">—</h3>
+                    </div>
+
+                    <div class="student-card">
+                        <p>Course</p>
+                        <h3 id="displayStudentCourse">—</h3>
+                    </div>
+
+                    <div class="student-card">
+                        <p>Year Level</p>
+                        <h3 id="displayStudentYear">—</h3>
+                    </div>
+
+                    <div class="student-card">
+                        <p>Section</p>
+                        <h3 id="displayStudentSection">—</h3>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TUITION SUMMARY -->
+            <div class="table-box" id="studentTuitionSection">
+
+                <h2>Tuition Fee Summary</h2>
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <div>
+                            <p>Original Tuition</p>
+                            <h2 id="studentTuition">₱0.00</h2>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div>
+                            <p>Discount</p>
+                            <h2 id="studentDiscount">0%</h2>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div>
+                            <p>Discounted Tuition</p>
+                            <h2 id="studentDiscountedTuition">₱0.00</h2>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div>
+                            <p>Total Paid</p>
+                            <h2 id="studentPaid">₱0.00</h2>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div>
+                            <p>Remaining Balance</p>
+                            <h2 id="studentBalance">₱0.00</h2>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="payment-status-card">
+
+                    <h3>Payment Status</h3>
+
+                    <p id="paymentStatus">No Payment</p>
+
+                    <div class="progress-track">
+                        <div
+                            id="paymentProgress"
+                            class="progress-fill"
+                            style="width: 0%">
+                        </div>
+                    </div>
+
+                    <p id="progressText">0% paid</p>
+
+                </div>
+
+            </div>
+
+
+            <!-- EXAM PERMIT -->
+            <div class="table-box" id="studentPermitSection">
+
+                <h2>My Examination Permit</h2>
+
+                <div class="permit-card">
+
+                    <p>Permit Status</p>
+                    <h3 id="permitStatus">Not Yet Generated</h3>
+
+                    <p>Permit Number</p>
+                    <h2 id="studentPermit">—</h2>
+
+                    <p id="permitNote">
+                        Your permit information will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- SUBMIT PAYMENT -->
+            <div class="table-box" id="studentPaymentSection">
+
+                <h2>Submit Payment</h2>
+
+                <p>
+                    Enter your payment reference number and payment
+                    information for administrator verification.
+                </p>
+
+                <div class="form-grid">
+
+                    <div>
+                        <label>Payment Reference Number</label>
+                        <input
+                            type="text"
+                            id="paymentReference"
+                            placeholder="Enter reference number"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Payment Amount (₱)</label>
+                        <input
+                            type="number"
+                            id="paymentAmount"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="Enter amount"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Payment Method</label>
+
+                        <select id="paymentMethod">
+                            <option value="">Select Payment Method</option>
+                            <option value="GCash">GCash</option>
+                            <option value="Maya">Maya</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <p id="paymentMessage"></p>
+
+                <button
+                    type="button"
+                    class="gold-button"
+                    onclick="submitPayment()"
+                >
+                    Submit Payment
+                </button>
+
+            </div>
+
+
+            <!-- PAYMENT HISTORY -->
+            <div class="table-box" id="studentHistorySection">
+
+                <h2>My Payment History</h2>
+
+                <div id="paymentHistory">
+
+                    <p class="empty-state">
+                        Loading payment history...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="js/Script.js" defer></script>
+
+</body>
+</html>
+```

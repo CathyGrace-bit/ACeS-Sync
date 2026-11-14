@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments | ACeS Sync</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/features.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <img src="image.jpg" alt="ACLC Logo">
+            <div>
+                <h2>ACeS Sync</h2>
+                <small>ACLC Mandaue</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="homepage.html">Dashboard</a>
+            <a href="students.html">Students</a>
+            <a href="payments.html" class="active">Payments</a>
+            <a href="permits.html">Exam Permits</a>
+            <a href="reports.html">Reports</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+
+        <button class="logout-button" onclick="logout()">
+            Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <header class="page-header">
+            <div>
+                <h1>Payment Management</h1>
+                <p>Review and verify student payment submissions.</p>
+            </div>
+        </header>
+
+
+        <section class="admin-content">
+
+            <!-- PAYMENT SUMMARY -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div>
+                        <p>Total Students</p>
+                        <h2 id="totalStudents">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <p>Total Collections</p>
+                        <h2 id="totalPayments">₱0.00</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <p>Pending Submissions</p>
+                        <h2 id="pendingCount">0</h2>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- PENDING PAYMENTS -->
+            <div class="table-box">
+
+                <h2>Payment Verification</h2>
+
+                <p>
+                    Review the submitted reference numbers and payment
+                    amounts before confirming a transaction.
+                </p>
+
+                <div id="pendingPayments">
+
+                    <p class="empty-state">
+                        Loading payment submissions...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAYMENT INFORMATION -->
+            <div class="table-box">
+
+                <h2>Payment Guidelines</h2>
+
+                <ul>
+                    <li>Check the payment reference number.</li>
+                    <li>Confirm the submitted payment amount.</li>
+                    <li>Verify the payment before updating the student's balance.</li>
+                    <li>Only verified payments should be included in collections.</li>
+                </ul>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="js/Script.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports | ACeS Sync</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/features.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <img src="image.jpg" alt="ACLC Logo">
+            <div>
+                <h2>ACeS Sync</h2>
+                <small>ACLC Mandaue</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="homepage.html">Dashboard</a>
+            <a href="students.html">Students</a>
+            <a href="payments.html">Payments</a>
+            <a href="permits.html">Exam Permits</a>
+            <a href="reports.html" class="active">Reports</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+
+        <button class="logout-button" onclick="logout()">
+            Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <header class="page-header">
+            <div>
+                <h1>Reports and Analytics</h1>
+                <p>Monitor student tuition, collections, and outstanding balances.</p>
+            </div>
+        </header>
+
+
+        <section class="admin-content">
+
+            <!-- FINANCIAL SUMMARY -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div>
+                        <p>Total Students</p>
+                        <h2 id="reportTotalStudents">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <p>Total Tuition</p>
+                        <h2 id="reportTotalTuition">₱0.00</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <p>Total Collections</p>
+                        <h2 id="reportTotalCollected">₱0.00</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <p>Outstanding Balance</p>
+                        <h2 id="reportTotalBalance">₱0.00</h2>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- PAYMENT STATUS SUMMARY -->
+            <div class="table-box">
+
+                <h2>Student Payment Summary</h2>
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <div>
+                            <p>Fully Paid</p>
+                            <h2 id="reportFullyPaid">0</h2>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div>
+                            <p>Partially Paid</p>
+                            <h2 id="reportPartiallyPaid">0</h2>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div>
+                            <p>Unpaid</p>
+                            <h2 id="reportUnpaid">0</h2>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STUDENT FINANCIAL RECORDS -->
+            <div class="table-box">
+
+                <h2>Student Financial Records</h2>
+
+                <div class="filter-row">
+
+                    <input
+                        type="text"
+                        id="reportSearch"
+                        placeholder="Search student ID or name"
+                    >
+
+                    <select id="reportStatusFilter">
+                        <option value="">All Payment Status</option>
+                        <option value="Paid">Fully Paid</option>
+                        <option value="Partial">Partially Paid</option>
+                        <option value="Unpaid">Unpaid</option>
+                    </select>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Course</th>
+                                <th>Year</th>
+                                <th>Tuition</th>
+                                <th>Discount</th>
+                                <th>Discounted Tuition</th>
+                                <th>Paid</th>
+                                <th>Balance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="reportTable"></tbody>
+
+                    </table>
+
+                </div>
+
+                <p id="reportCountText">Showing 0 students</p>
+
+                <button
+                    type="button"
+                    class="gold-button"
+                    onclick="window.print()"
+                >
+                    Print Report
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="js/Script.js" defer></script>
+
+</body>
+</html>
+```
