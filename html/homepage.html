@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACeS Sync | ACLC Mandaue Login</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+
+    <section id="loginPage" class="login-wrap">
+
+        <!-- LEFT BRANDING PANEL -->
+        <div class="login-brand">
+            <div class="brand-content">
+
+                <div class="school-logo">
+                    <img src="image.jpg" alt="ACLC College Mandaue Logo">
+                </div>
+
+                <h2>ACLC MANDAUE</h2>
+                <h1>ACeS Sync</h1>
+
+                <p class="tagline">
+                    Connecting Students &amp; Administration
+                </p>
+
+                <div class="gold-line">
+                    <span class="gold-line-side"></span>
+                    <span class="gold-line-center">◆</span>
+                    <span class="gold-line-side"></span>
+                </div>
+
+                <p class="features">
+                    Secure <span>•</span>
+                    Efficient <span>•</span>
+                    Organized
+                </p>
+
+            </div>
+
+            <p class="copyright">
+                © 2026 ACLC Mandaue City
+            </p>
+        </div>
+
+        <!-- RIGHT LOGIN PANEL -->
+        <div class="login-panel">
+            <div class="login-panel-inner">
+
+                <div class="login-heading">
+                    <h1>Login Dashboard</h1>
+                    <p>
+                        Access the ACeS Sync system.
+                        Choose your login type to continue.
+                    </p>
+                </div>
+
+                <!-- LOGIN TABS -->
+                <div class="login-tabs">
+
+                    <button type="button"
+                            id="studentTab"
+                            class="tab active"
+                            onclick="showLogin('student')">
+                        🎓 Student Login
+                    </button>
+
+                    <button type="button"
+                            id="adminTab"
+                            class="tab"
+                            onclick="showLogin('admin')">
+                        🛡️ Admin / Cashier
+                    </button>
+
+                </div>
+
+                <!-- STUDENT LOGIN -->
+                <div id="studentLogin" class="login-form">
+
+                    <h2>Student Login</h2>
+
+                    <div class="form-row">
+                        <label for="studentId">Student ID</label>
+                        <input type="text" id="studentId"
+                               placeholder="Enter Student ID">
+                    </div>
+
+                    <div class="form-row">
+                        <label for="studentNameLogin">Full Name</label>
+                        <input type="text" id="studentNameLogin"
+                               placeholder="Enter Full Name">
+                    </div>
+
+                    <div class="form-row">
+                        <label for="studentYear">Grade / Year</label>
+                        <select id="studentYear">
+                            <option value="">Select Grade / Year</option>
+                            <option>Grade 11</option>
+                            <option>Grade 12</option>
+                            <option>1st Year</option>
+                            <option>2nd Year</option>
+                            <option>3rd Year</option>
+                            <option>4th Year</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="studentCourseLogin">Course</label>
+                        <select id="studentCourseLogin">
+                            <option value="">Select Course</option>
+                            <option>BSIT</option>
+                            <option>BSCS</option>
+                            <option>BSBA</option>
+                            <option>BSTM</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="studentSection">Section</label>
+                        <input type="text" id="studentSection"
+                               placeholder="Example: 3A">
+                    </div>
+
+                    <button type="button"
+                            class="primary-btn full-btn"
+                            onclick="studentLogin()">
+                        ➜ Login as Student
+                    </button>
+
+                    <p id="studentLoginMessage"
+                       class="message"
+                       aria-live="polite"></p>
+
+                </div>
+
+                <!-- ADMIN LOGIN -->
+                <div id="adminLogin" class="login-form hidden">
+
+                    <h2>Admin / Cashier Login</h2>
+
+                    <div class="form-row">
+                        <label for="adminId">Admin ID</label>
+                        <input type="text" id="adminId"
+                               placeholder="Enter Admin ID">
+                    </div>
+
+                    <div class="form-row">
+                        <label for="adminPassword">Password</label>
+                        <input type="password" id="adminPassword"
+                               placeholder="Enter Password">
+                    </div>
+
+                    <button type="button"
+                            class="primary-btn full-btn"
+                            onclick="adminLogin()">
+                        ➜ Login as Admin / Cashier
+                    </button>
+
+                    <p id="adminLoginMessage"
+                       class="message"
+                       aria-live="polite"></p>
+
+                    <p class="demo-note">
+                        Demo login: <strong>admin</strong> /
+                        <strong>1234</strong>
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <script src="../js/login.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,414 @@
+
+/* =========================================
+   ACeS SYNC - STUDENTS MODULE
+   NAVY BLUE + GOLD + WHITE
+========================================= */
+
+:root {
+    --navy: #071d43;
+    --navy-light: #102f66;
+    --navy-soft: #173b75;
+    --gold: #f5a623;
+    --gold-light: #ffbd4a;
+    --white: #ffffff;
+    --background: #f4f6fa;
+    --text: #17243b;
+    --muted: #758198;
+    --border: #dce3ee;
+    --green: #16845b;
+    --red: #d94b4b;
+    --shadow: 0 8px 24px rgba(7, 29, 67, 0.09);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+/* =========================================
+   ADMIN LAYOUT
+========================================= */
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    min-height: 100vh;
+    padding: 25px 18px;
+    background: linear-gradient(180deg, var(--navy), var(--navy-light));
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.sidebar-brand img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: var(--white);
+    padding: 4px;
+    border: 3px solid var(--gold);
+}
+
+.sidebar-brand h2 {
+    font-size: 20px;
+    color: var(--white);
+}
+
+.sidebar-brand small {
+    color: var(--gold-light);
+    font-size: 12px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+.sidebar-nav a {
+    color: #dce5f5;
+    text-decoration: none;
+    padding: 13px 15px;
+    border-radius: 9px;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.logout-button {
+    margin-top: auto;
+    padding: 13px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 9px;
+    background: transparent;
+    color: var(--white);
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.logout-button:hover {
+    background: var(--red);
+    border-color: var(--red);
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+.admin-main {
+    flex: 1;
+    min-width: 0;
+    padding: 30px;
+}
+
+.page-header {
+    background: var(--white);
+    padding: 25px 28px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--gold);
+    margin-bottom: 25px;
+}
+
+.page-header h1 {
+    color: var(--navy);
+    font-family: Georgia, serif;
+    font-size: 27px;
+    margin-bottom: 7px;
+}
+
+.page-header p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.admin-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.table-box,
+.add-student {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.table-box h2,
+.add-student h2 {
+    color: var(--navy);
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+/* =========================================
+   FILTERS
+========================================= */
+
+.filter-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.filter-row input,
+.filter-row select,
+.form-grid input,
+.form-grid select {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+}
+
+.filter-row input:focus,
+.filter-row select:focus,
+.form-grid input:focus,
+.form-grid select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.13);
+}
+
+#countText {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 12px 0;
+}
+
+/* =========================================
+   STUDENT TABLE
+========================================= */
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+thead {
+    background: var(--navy);
+    color: var(--white);
+}
+
+th {
+    padding: 14px 12px;
+    text-align: left;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+tbody tr:hover {
+    background: #f8faff;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================================
+   STATUS
+========================================= */
+
+.status,
+.payment-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.status.paid {
+    color: var(--green);
+    background: #e5f5ed;
+}
+
+.status.pending {
+    color: #9a6500;
+    background: #fff3d8;
+}
+
+.status.unpaid {
+    color: var(--red);
+    background: #fdeaea;
+}
+
+/* =========================================
+   ADD STUDENT FORM
+========================================= */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.form-grid label {
+    display: block;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.tuition-preview {
+    margin-top: 22px;
+    padding: 18px;
+    background: #f5f8fd;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 9px;
+}
+
+.tuition-preview p {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 7px 0;
+    font-size: 14px;
+}
+
+.tuition-preview strong {
+    color: var(--navy);
+}
+
+.gold-button {
+    margin-top: 20px;
+    padding: 13px 23px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.gold-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(245,166,35,0.25);
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-state {
+    padding: 25px;
+    color: var(--muted);
+    text-align: center;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+    .filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .admin-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-width: 0;
+        min-height: auto;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar-nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 20px;
+    }
+
+    .logout-button {
+        margin-top: 18px;
+    }
+
+    .admin-main {
+        padding: 16px;
+    }
+
+    .page-header,
+    .table-box,
+    .add-student {
+        padding: 18px;
+    }
+
+    .filter-row,
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header h1 {
+        font-size: 23px;
+    }
+}

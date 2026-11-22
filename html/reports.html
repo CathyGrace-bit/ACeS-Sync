@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports | ACeS Sync</title>
 
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/menu.css">
-    <link rel="stylesheet" href="css/features.css">
+    <title>Reports and Analytics | ACeS Sync</title>
+
+    <!-- REPORTS CSS -->
+    <link rel="stylesheet" href="../css/reports.css">
 </head>
 <body>
 
@@ -18,7 +18,8 @@
     <aside class="sidebar">
 
         <div class="sidebar-brand">
-            <img src="image.jpg" alt="ACLC Logo">
+            <img src="../image.jpg" alt="ACLC Logo">
+
             <div>
                 <h2>ACeS Sync</h2>
                 <small>ACLC Mandaue</small>
@@ -44,6 +45,7 @@
     <!-- MAIN CONTENT -->
     <main class="admin-main">
 
+        <!-- PAGE HEADER -->
         <header class="page-header">
             <div>
                 <h1>Reports and Analytics</h1>
@@ -93,7 +95,7 @@
 
                 <h2>Student Payment Summary</h2>
 
-                <div class="stats-grid">
+                <div class="stats-grid status-summary">
 
                     <div class="stat-card">
                         <div>
@@ -124,8 +126,12 @@
             <!-- STUDENT FINANCIAL RECORDS -->
             <div class="table-box">
 
-                <h2>Student Financial Records</h2>
+                <div class="section-heading">
+                    <h2>Student Financial Records</h2>
+                    <p>View each student's tuition, payments, discounts, and remaining balance.</p>
+                </div>
 
+                <!-- FILTERS -->
                 <div class="filter-row">
 
                     <input
@@ -143,6 +149,8 @@
 
                 </div>
 
+
+                <!-- FINANCIAL TABLE -->
                 <div class="table-responsive">
 
                     <table>
@@ -161,21 +169,30 @@
                             </tr>
                         </thead>
 
-                        <tbody id="reportTable"></tbody>
-
+                        <tbody id="reportTable">
+                            <tr>
+                                <td colspan="10" class="empty-state">
+                                    Loading financial records...
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
 
                 </div>
 
-                <p id="reportCountText">Showing 0 students</p>
+                <p id="reportCountText" class="count-text">
+                    Showing 0 students
+                </p>
 
-                <button
-                    type="button"
-                    class="gold-button"
-                    onclick="window.print()"
-                >
-                    Print Report
-                </button>
+                <div class="report-actions">
+                    <button
+                        type="button"
+                        class="gold-button"
+                        onclick="window.print()"
+                    >
+                        Print Report
+                    </button>
+                </div>
 
             </div>
 
@@ -185,8 +202,10 @@
 
 </div>
 
-<script src="js/Script.js" defer></script>
+
+<!-- REPORTS JAVASCRIPT -->
+<script src="../js/reports.js" defer></script>
 
 </body>
 </html>
-```
+

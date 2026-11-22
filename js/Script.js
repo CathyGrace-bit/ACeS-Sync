@@ -1,8 +1,11 @@
+
 /* =====================================================
    ACeS SYNC - ACLC MANDAUE
-   Main JavaScript
-   Supports all separate HTML pages
+   MAIN JAVASCRIPT
+   Admin Dashboard + Student Dashboard
 ===================================================== */
+
+"use strict";
 
 const STORAGE_KEY = "acesSyncData_v1";
 const SESSION_KEY = "acesSyncSession_v1";
@@ -11,9 +14,8 @@ const SETTINGS_KEY = "acesSyncSettings_v1";
 let students = [];
 let currentStudent = null;
 
-
 /* =====================================================
-   1. GENERAL FUNCTIONS
+   1. GENERAL HELPERS
 ===================================================== */
 
 function getElement(id) {
@@ -27,11 +29,20 @@ function money(amount) {
     });
 }
 
+function safeLower(value) {
+    return String(value ?? "").trim().toLowerCase();
+}
+
 function showMessage(element, message, color = "#b42318") {
     if (!element) return;
 
     element.textContent = message;
     element.style.color = color;
+}
+
+function setText(id, value) {
+    const element = getElement(id);
+    if (element) element.textContent = value;
 }
 
 function createCell(value) {
@@ -41,8 +52,11 @@ function createCell(value) {
 }
 
 function getPaymentStatus(student) {
-    if (Number(student.balance) <= 0) return "Paid";
-    if (Number(student.paid) > 0) return "Partial";
+    const balance = Number(student.balance || 0);
+    const paid = Number(student.paid || 0);
+
+    if (balance <= 0) return "Paid";
+    if (paid > 0) return "Partial";
     return "Unpaid";
 }
 
@@ -57,37 +71,48 @@ function getPaymentProgress(student) {
     );
 }
 
-function safeLower(value) {
-    return String(value || "").toLowerCase();
-}
-
-
 /* =====================================================
-   2. LOCAL STORAGE
+   2. SHARED LOCAL STORAGE
 ===================================================== */
 
 function loadSavedData() {
     try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        students = savedData ? JSON.parse(savedData) : [];
+        const saved = localStorage.getItem(STORAGE_KEY);
 
-        if (!Array.isArray(students)) students = [];
+        if (!saved) {
+            students = [];
+            return;
+        }
+
+        const parsed = JSON.parse(saved);
+
+        // Supports both the original array and an object
+        // that contains a students array.
+        if (Array.isArray(parsed)) {
+            students = parsed;
+        } else if (parsed && Array.isArray(parsed.students)) {
+            students = parsed.students;
+        } else {
+            students = [];
+        }
 
         students.forEach(student => {
-            student.id = String(student.id || "");
-            student.name = String(student.name || "");
-            student.grade = String(student.grade || "");
-            student.course = String(student.course || "");
-            student.section = String(student.section || "");
+            student.id = String(student.id ?? student.studentID ?? "");
+            student.name = String(student.name ?? student.studentName ?? "");
+            student.grade = String(student.grade ?? student.year ?? "");
+            student.course = String(student.course ?? "");
+            student.section = String(student.section ?? "");
 
             student.tuition = Number(student.tuition || 0);
             student.discount = Number(student.discount || 0);
+
             student.discountedTuition = Number(
                 student.discountedTuition ??
-                (student.tuition - student.tuition * student.discount / 100)
+                (student.tuition - (student.tuition * student.discount / 100))
             );
 
             student.paid = Number(student.paid || 0);
+
             student.balance = Number(
                 student.balance ??
                 Math.max(student.discountedTuition - student.paid, 0)
@@ -107,7 +132,7 @@ function loadSavedData() {
         });
 
     } catch (error) {
-        console.error("Unable to load saved data:", error);
+        console.error("Unable to load ACeS Sync data:", error);
         students = [];
     }
 }
@@ -115,26 +140,32 @@ function loadSavedData() {
 function saveData() {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+        return true;
     } catch (error) {
-        console.error("Unable to save data:", error);
-        alert("Unable to save your data. Check your browser storage.");
+        console.error("Unable to save ACeS Sync data:", error);
+        alert("Unable to save data. Please check your browser storage.");
+        return false;
     }
 }
 
+// Shared helper for other scripts that need student records.
+function getStudents() {
+    return students;
+}
+
+function saveStudents(data) {
+    if (!Array.isArray(data)) {
+        console.error("saveStudents expects an array.");
+        return;
+    }
+
+    students = data;
+    saveData();
+}
 
 /* =====================================================
    3. SESSION MANAGEMENT
 ===================================================== */
-
-function saveSession(role, studentId = null) {
-    const session = {
-        role,
-        studentId,
-        loggedIn: true
-    };
-
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-}
 
 function getSession() {
     try {
@@ -151,99 +182,51 @@ function clearSession() {
 function logout() {
     currentStudent = null;
     clearSession();
-    window.location.href = "index.html";
+    window.location.href = "homepage.html";
 }
 
-
 /* =====================================================
-   4. LOGIN TABS
+   4. ADMIN DASHBOARD
 ===================================================== */
 
-function showLogin(type) {
-    const student = getElement("studentLogin");
-    const admin = getElement("adminLogin");
-    const tabs = document.querySelectorAll(".tab");
-
-    if (!student || !admin) return;
-
-    if (type === "student") {
-        student.classList.remove("hidden");
-        admin.classList.add("hidden");
-
-        if (tabs[0]) tabs[0].classList.add("active");
-        if (tabs[1]) tabs[1].classList.remove("active");
-    } else {
-        student.classList.add("hidden");
-        admin.classList.remove("hidden");
-
-        if (tabs[0]) tabs[0].classList.remove("active");
-        if (tabs[1]) tabs[1].classList.add("active");
-    }
-}
-
-
-/* =====================================================
-   5. ADMIN LOGIN
-===================================================== */
-
-function adminLogin() {
-    const id = getElement("adminId")?.value.trim();
-    const password = getElement("adminPassword")?.value;
-    const message = getElement("adminLoginMessage");
-
-    // DEMO CREDENTIALS
-    if (id === "admin" && password === "1234") {
-        saveSession("admin");
-        showMessage(message, "");
-        window.location.href = "homepage.html";
-    } else {
-        showMessage(message, "Incorrect Admin ID or Password.");
-    }
-}
-
-
-/* =====================================================
-   6. STUDENT LOGIN
-===================================================== */
-
-function studentLogin() {
-    const id = getElement("studentId")?.value.trim();
-    const name = getElement("studentNameLogin")?.value.trim();
-    const year = getElement("studentYear")?.value;
-    const course = getElement("studentCourseLogin")?.value;
-    const section = getElement("studentSection")?.value.trim();
-
-    const message = getElement("studentLoginMessage");
-
-    if (!id || !name || !year || !course || !section) {
-        showMessage(message, "Please complete all student information.");
-        return;
-    }
-
-    const student = students.find(s =>
-        safeLower(s.id) === safeLower(id) &&
-        safeLower(s.name) === safeLower(name) &&
-        s.grade === year &&
-        s.course === course &&
-        safeLower(s.section) === safeLower(section)
+function updateStats() {
+    const totalPayments = students.reduce(
+        (total, student) => total + Number(student.paid || 0),
+        0
     );
 
-    if (!student) {
-        showMessage(
-            message,
-            "Student record not found. Please check your information."
-        );
-        return;
-    }
+    const permittedStudents = students.filter(
+        student => Boolean(student.permit)
+    );
 
-    saveSession("student", student.id);
-    showMessage(message, "");
-    window.location.href = "student-dashboard.html";
+    setText("totalStudents", students.length);
+    setText("totalPayments", money(totalPayments));
+    setText("permitsCount", permittedStudents.length);
+
+    if (permittedStudents.length > 0) {
+        const latestPermit = permittedStudents.reduce((latest, student) => {
+            const currentDate = student.permitGeneratedAt || "";
+            const latestDate = latest.permitGeneratedAt || "";
+
+            return currentDate > latestDate ? student : latest;
+        });
+
+        setText("lastPermit", latestPermit.permit || "Generated");
+
+        setText(
+            "lastPermitDate",
+            latestPermit.permitGeneratedAt
+                ? new Date(latestPermit.permitGeneratedAt).toLocaleDateString("en-PH")
+                : "Date unavailable"
+        );
+    } else {
+        setText("lastPermit", "—");
+        setText("lastPermitDate", "No permits yet");
+    }
 }
 
-
 /* =====================================================
-   7. TUITION PREVIEW
+   5. TUITION PREVIEW
 ===================================================== */
 
 function updateTuitionPreview() {
@@ -253,30 +236,23 @@ function updateTuitionPreview() {
 
     discount = Math.min(Math.max(discount, 0), 100);
 
-    const discountedTuition = tuition - tuition * discount / 100;
+    const discountedTuition = tuition - (tuition * discount / 100);
     const balance = Math.max(discountedTuition - paid, 0);
 
-    if (getElement("discountedTuition")) {
-        getElement("discountedTuition").textContent =
-            money(discountedTuition);
-    }
-
-    if (getElement("initialBalance")) {
-        getElement("initialBalance").textContent = money(balance);
-    }
+    setText("discountedTuition", money(discountedTuition));
+    setText("initialBalance", money(balance));
 }
 
-
 /* =====================================================
-   8. ADD STUDENT
+   6. ADD STUDENT
 ===================================================== */
 
 function addStudent() {
-    const id = getElement("studentID")?.value.trim();
-    const name = getElement("studentName")?.value.trim();
-    const grade = getElement("studentGrade")?.value;
-    const course = getElement("studentCourse")?.value;
-    const section = getElement("studentSectionAdmin")?.value.trim();
+    const id = getElement("studentID")?.value.trim() || "";
+    const name = getElement("studentName")?.value.trim() || "";
+    const grade = getElement("studentGrade")?.value || "";
+    const course = getElement("studentCourse")?.value || "";
+    const section = getElement("studentSectionAdmin")?.value.trim() || "";
 
     const tuition = Number(getElement("tuitionExact")?.value);
     const discount = Number(getElement("discountPercent")?.value) || 0;
@@ -292,7 +268,7 @@ function addStudent() {
         return;
     }
 
-    if (discount < 0 || discount > 100) {
+    if (!Number.isFinite(discount) || discount < 0 || discount > 100) {
         alert("Discount must be between 0% and 100%.");
         return;
     }
@@ -302,14 +278,18 @@ function addStudent() {
         return;
     }
 
-    const discountedTuition = tuition - tuition * discount / 100;
+    const discountedTuition = tuition - (tuition * discount / 100);
 
     if (paid > discountedTuition) {
         alert("Initial payment cannot exceed the discounted tuition.");
         return;
     }
 
-    if (students.some(s => safeLower(s.id) === safeLower(id))) {
+    const duplicate = students.some(
+        student => safeLower(student.id) === safeLower(id)
+    );
+
+    if (duplicate) {
         alert("Student ID already exists.");
         return;
     }
@@ -324,14 +304,18 @@ function addStudent() {
         discount,
         discountedTuition,
         paid,
-        balance: discountedTuition - paid,
+        balance: Math.max(discountedTuition - paid, 0),
         permit: null,
         permitGeneratedAt: null,
         payments: []
     };
 
     students.push(student);
-    saveData();
+
+    if (!saveData()) {
+        students.pop();
+        return;
+    }
 
     renderStudents();
     updateStats();
@@ -343,9 +327,8 @@ function addStudent() {
     alert("Student added successfully!");
 }
 
-
 /* =====================================================
-   9. CLEAR STUDENT FORM
+   7. CLEAR STUDENT FORM
 ===================================================== */
 
 function clearStudentForm() {
@@ -357,7 +340,8 @@ function clearStudentForm() {
         "studentSectionAdmin",
         "tuitionExact"
     ].forEach(id => {
-        if (getElement(id)) getElement(id).value = "";
+        const element = getElement(id);
+        if (element) element.value = "";
     });
 
     if (getElement("discountPercent")) {
@@ -371,9 +355,8 @@ function clearStudentForm() {
     updateTuitionPreview();
 }
 
-
 /* =====================================================
-   10. STUDENT TABLE
+   8. STUDENT RECORDS TABLE
 ===================================================== */
 
 function renderStudentRows(list) {
@@ -408,10 +391,7 @@ function renderStudentRows(list) {
         table.appendChild(row);
     });
 
-    if (getElement("countText")) {
-        getElement("countText").textContent =
-            "Showing " + list.length + " students";
-    }
+    setText("countText", "Showing " + list.length + " students");
 }
 
 function renderStudents() {
@@ -441,145 +421,14 @@ function filterStudents() {
     renderStudentRows(filtered);
 }
 
-
 /* =====================================================
-   11. DASHBOARD STATISTICS
-===================================================== */
-
-function updateStats() {
-    const totalPayments = students.reduce(
-        (total, student) => total + Number(student.paid || 0),
-        0
-    );
-
-    const permitted = students.filter(student => student.permit);
-
-    if (getElement("totalStudents")) {
-        getElement("totalStudents").textContent = students.length;
-    }
-
-    if (getElement("totalPayments")) {
-        getElement("totalPayments").textContent = money(totalPayments);
-    }
-
-    getElement("permitsCount").textContent =
-        permittedStudents.length;
-
-    if (permittedStudents.length > 0) {
-        const latestPermit = permittedStudents.reduce((latest, student) => {
-            const currentDate = student.permitGeneratedAt || "";
-
-            const latestDate = latest.permitGeneratedAt || "";
-
-            return currentDate > latestDate ? student : latest;
-        });
-
-        getElement("lastPermit").textContent = latestPermit.permit;
-
-        getElement("lastPermitDate").textContent =
-            latestPermit.permitGeneratedAt
-                ? new Date(latestPermit.permitGeneratedAt).toLocaleDateString("en-PH")
-                : "Latest permit";
-    } else {
-        getElement("lastPermit").textContent = "—";
-        getElement("lastPermitDate").textContent = "No permits yet";
-    }
-}
-
-
-/* =====================================================
-   10. ADMIN LOGIN
-===================================================== */
-
-function adminLogin() {
-    const id = getElement("adminId").value.trim();
-
-    const password = getElement("adminPassword").value;
-
-    const message = getElement("adminLoginMessage");
-
-    // DEMO LOGIN ONLY
-    if (id === "admin" && password === "1234") {
-        getElement("loginPage").classList.add("hidden");
-
-        getElement("studentPage").classList.add("hidden");
-
-        getElement("adminPage").classList.remove("hidden");
-
-        showMessage(message, "");
-
-        renderStudents();
-        updateStats();
-        renderPendingPayments();
-
-    } else {
-        showMessage(message, "Incorrect Admin ID or Password.");
-    }
-}
-
-
-/* =====================================================
-   11. STUDENT LOGIN
-===================================================== */
-
-function studentLogin() {
-    const id = getElement("studentId").value.trim();
-
-    const name = getElement("studentNameLogin").value.trim();
-
-    const year = getElement("studentYear").value;
-
-    const course = getElement("studentCourseLogin").value;
-
-    const section = getElement("studentSection").value.trim();
-
-    const message = getElement("studentLoginMessage");
-
-    const student = students.find(s => {
-        return (
-            s.id.toLowerCase() === id.toLowerCase() &&
-            s.name.toLowerCase() === name.toLowerCase() &&
-            s.grade === year &&
-            s.course === course &&
-            s.section.toLowerCase() === section.toLowerCase()
-        );
-    });
-
-    if (!student) {
-        showMessage(
-            message,
-            "Student record not found. Please check your information."
-        );
-
-        return;
-    }
-
-    currentStudent = student;
-
-    getElement("loginPage").classList.add("hidden");
-
-    getElement("adminPage").classList.add("hidden");
-
-    getElement("studentPage").classList.remove("hidden");
-
-    showMessage(message, "");
-
-    loadStudentDashboard();
-}
-
-
-/* =====================================================
-   12. STUDENT DASHBOARD
+   9. STUDENT DASHBOARD
 ===================================================== */
 
 function loadStudentDashboard() {
     if (!currentStudent) return;
 
     const student = currentStudent;
-
-    const setText = (id, value) => {
-        if (getElement(id)) getElement(id).textContent = value;
-    };
 
     setText("displayStudentName", student.name);
     setText("displayStudentId", student.id);
@@ -605,8 +454,9 @@ function loadStudentDashboard() {
 
     const progress = getPaymentProgress(student);
 
-    if (getElement("paymentProgress")) {
-        getElement("paymentProgress").style.width = progress + "%";
+    const progressBar = getElement("paymentProgress");
+    if (progressBar) {
+        progressBar.style.width = progress + "%";
     }
 
     setText("progressText", progress.toFixed(1) + "% paid");
@@ -627,9 +477,8 @@ function loadStudentDashboard() {
     renderPaymentHistory();
 }
 
-
 /* =====================================================
-   13. PAYMENT HISTORY
+   10. PAYMENT HISTORY
 ===================================================== */
 
 function renderPaymentHistory() {
@@ -651,16 +500,16 @@ function renderPaymentHistory() {
         item.className = "history-item";
 
         const reference = document.createElement("strong");
-        reference.textContent = payment.reference;
+        reference.textContent = payment.reference || "No reference";
 
         const amount = document.createElement("span");
         amount.textContent = money(payment.amount);
 
         const method = document.createElement("span");
-        method.textContent = payment.method;
+        method.textContent = payment.method || "Not specified";
 
         const status = document.createElement("span");
-        status.textContent = payment.status;
+        status.textContent = payment.status || "Pending Verification";
 
         const date = document.createElement("small");
         date.textContent = payment.date
@@ -672,17 +521,16 @@ function renderPaymentHistory() {
     });
 }
 
-
 /* =====================================================
-   14. SUBMIT PAYMENT
+   11. SUBMIT PAYMENT
 ===================================================== */
 
 function submitPayment() {
     if (!currentStudent) return;
 
-    const reference = getElement("paymentReference")?.value.trim();
+    const reference = getElement("paymentReference")?.value.trim() || "";
     const amount = Number(getElement("paymentAmount")?.value);
-    const method = getElement("paymentMethod")?.value;
+    const method = getElement("paymentMethod")?.value || "";
     const message = getElement("paymentMessage");
 
     if (!reference || !Number.isFinite(amount) || amount <= 0 || !method) {
@@ -693,7 +541,7 @@ function submitPayment() {
         return;
     }
 
-    if (amount > currentStudent.balance) {
+    if (amount > Number(currentStudent.balance)) {
         showMessage(
             message,
             "Payment cannot exceed your remaining balance."
@@ -715,18 +563,26 @@ function submitPayment() {
         return;
     }
 
-    currentStudent.payments.push({
+    const payment = {
         reference,
         amount,
         method,
         status: "Pending Verification",
         date: new Date().toISOString()
-    });
+    };
 
-    saveData();
+    currentStudent.payments.push(payment);
 
-    getElement("paymentReference").value = "";
-    getElement("paymentAmount").value = "";
+    if (!saveData()) {
+        currentStudent.payments.pop();
+        return;
+    }
+
+    const referenceInput = getElement("paymentReference");
+    const amountInput = getElement("paymentAmount");
+
+    if (referenceInput) referenceInput.value = "";
+    if (amountInput) amountInput.value = "";
 
     showMessage(
         message,
@@ -737,9 +593,8 @@ function submitPayment() {
     renderPaymentHistory();
 }
 
-
 /* =====================================================
-   15. PENDING PAYMENTS
+   12. PENDING PAYMENTS
 ===================================================== */
 
 function renderPendingPayments() {
@@ -801,18 +656,18 @@ function renderPendingPayments() {
         box.appendChild(empty);
     }
 
-    if (getElement("pendingCount")) {
-        getElement("pendingCount").textContent = pendingCount;
-    }
+    setText("pendingCount", pendingCount);
 }
 
-
 /* =====================================================
-   16. VERIFY PAYMENT
+   13. VERIFY PAYMENT
 ===================================================== */
 
 function verifyPayment(studentId, paymentIndex) {
-    const student = students.find(s => s.id === studentId);
+    const student = students.find(
+        item => item.id === String(studentId)
+    );
+
     if (!student) return;
 
     const payment = student.payments[paymentIndex];
@@ -837,6 +692,7 @@ function verifyPayment(studentId, paymentIndex) {
         0
     );
 
+    // Generate a permit after the first verified payment.
     if (!student.permit) {
         student.permit =
             "ACLC-" +
@@ -847,7 +703,18 @@ function verifyPayment(studentId, paymentIndex) {
         student.permitGeneratedAt = new Date().toISOString();
     }
 
-    saveData();
+    if (!saveData()) {
+        payment.status = "Pending Verification";
+        delete payment.verifiedAt;
+        student.paid -= Number(payment.amount);
+        student.balance = Math.max(
+            Number(student.discountedTuition) - student.paid,
+            0
+        );
+        student.permit = null;
+        student.permitGeneratedAt = null;
+        return;
+    }
 
     renderStudents();
     updateStats();
@@ -856,15 +723,15 @@ function verifyPayment(studentId, paymentIndex) {
     renderReports();
 
     if (currentStudent && currentStudent.id === student.id) {
+        currentStudent = student;
         loadStudentDashboard();
     }
 
     alert("Payment successfully verified.");
 }
 
-
 /* =====================================================
-   17. PAYMENTS PAGE
+   14. PAYMENTS PAGE HELPER
 ===================================================== */
 
 function initializePaymentsPage() {
@@ -872,9 +739,8 @@ function initializePaymentsPage() {
     renderPendingPayments();
 }
 
-
 /* =====================================================
-   18. EXAM PERMITS PAGE
+   15. EXAM PERMITS
 ===================================================== */
 
 function renderPermitPage() {
@@ -922,30 +788,16 @@ function renderPermitPage() {
         table.appendChild(row);
     });
 
-    const permitted = students.filter(s => s.permit).length;
+    const permitted = students.filter(student => student.permit).length;
 
-    if (getElement("totalStudents")) {
-        getElement("totalStudents").textContent = students.length;
-    }
-
-    if (getElement("permitsCount")) {
-        getElement("permitsCount").textContent = permitted;
-    }
-
-    if (getElement("withoutPermitCount")) {
-        getElement("withoutPermitCount").textContent =
-            students.length - permitted;
-    }
-
-    if (getElement("permitCountText")) {
-        getElement("permitCountText").textContent =
-            "Showing " + filtered.length + " students";
-    }
+    setText("totalStudents", students.length);
+    setText("permitsCount", permitted);
+    setText("withoutPermitCount", students.length - permitted);
+    setText("permitCountText", "Showing " + filtered.length + " students");
 }
 
-
 /* =====================================================
-   19. REPORTS PAGE
+   16. REPORTS
 ===================================================== */
 
 function renderReports() {
@@ -956,27 +808,31 @@ function renderReports() {
     const statusFilter = getElement("reportStatusFilter")?.value || "";
 
     const totalTuition = students.reduce(
-        (sum, s) => sum + Number(s.discountedTuition || 0),
+        (sum, student) => sum + Number(student.discountedTuition || 0),
         0
     );
 
     const totalCollected = students.reduce(
-        (sum, s) => sum + Number(s.paid || 0),
+        (sum, student) => sum + Number(student.paid || 0),
         0
     );
 
     const totalBalance = students.reduce(
-        (sum, s) => sum + Number(s.balance || 0),
+        (sum, student) => sum + Number(student.balance || 0),
         0
     );
 
-    const paidCount = students.filter(s => getPaymentStatus(s) === "Paid").length;
-    const partialCount = students.filter(s => getPaymentStatus(s) === "Partial").length;
-    const unpaidCount = students.filter(s => getPaymentStatus(s) === "Unpaid").length;
+    const paidCount = students.filter(
+        student => getPaymentStatus(student) === "Paid"
+    ).length;
 
-    const setText = (id, value) => {
-        if (getElement(id)) getElement(id).textContent = value;
-    };
+    const partialCount = students.filter(
+        student => getPaymentStatus(student) === "Partial"
+    ).length;
+
+    const unpaidCount = students.filter(
+        student => getPaymentStatus(student) === "Unpaid"
+    ).length;
 
     setText("reportTotalStudents", students.length);
     setText("reportTotalTuition", money(totalTuition));
@@ -1021,9 +877,8 @@ function renderReports() {
     setText("reportCountText", "Showing " + filtered.length + " students");
 }
 
-
 /* =====================================================
-   20. SETTINGS PAGE
+   17. SETTINGS
 ===================================================== */
 
 function loadSettings() {
@@ -1035,21 +890,13 @@ function loadSettings() {
         settings = {};
     }
 
-    if (getElement("schoolName") && settings.schoolName) {
-        getElement("schoolName").value = settings.schoolName;
-    }
+    ["schoolName", "systemName", "campusName", "academicYear"].forEach(id => {
+        const element = getElement(id);
 
-    if (getElement("systemName") && settings.systemName) {
-        getElement("systemName").value = settings.systemName;
-    }
-
-    if (getElement("campusName") && settings.campusName) {
-        getElement("campusName").value = settings.campusName;
-    }
-
-    if (getElement("academicYear") && settings.academicYear) {
-        getElement("academicYear").value = settings.academicYear;
-    }
+        if (element && settings[id]) {
+            element.value = settings[id];
+        }
+    });
 }
 
 function saveSettings() {
@@ -1076,9 +923,8 @@ function saveSettings() {
     }
 }
 
-
 /* =====================================================
-   21. EXPORT STUDENT DATA
+   18. EXPORT STUDENT DATA
 ===================================================== */
 
 function exportStudentData() {
@@ -1141,58 +987,46 @@ function exportStudentData() {
     URL.revokeObjectURL(url);
 }
 
-
 /* =====================================================
-   22. PAGE ACCESS CONTROL
+   19. PAGE ACCESS CONTROL
 ===================================================== */
 
 function protectPage() {
     const session = getSession();
     const page = window.location.pathname.split("/").pop().toLowerCase();
 
-    const isLoginPage = page === "" || page === "index.html";
     const isStudentPage = page === "student-dashboard.html";
-
-    if (isLoginPage) {
-        if (session?.loggedIn) {
-            if (session.role === "admin") {
-                window.location.href = "homepage.html";
-                return false;
-            }
-
-            if (session.role === "student") {
-                window.location.href = "student-dashboard.html";
-                return false;
-            }
-        }
-
-        return true;
-    }
+    const isAdminPage = page === "admindashboard.html";
 
     if (!session || !session.loggedIn) {
-        window.location.href = "index.html";
-        return false;
-    }
-
-    if (isStudentPage && session.role !== "student") {
         window.location.href = "homepage.html";
         return false;
     }
 
-    if (!isStudentPage && session.role !== "admin") {
+    if (isAdminPage && session.role !== "admin") {
         window.location.href = "student-dashboard.html";
+        return false;
+    }
+
+    if (isStudentPage && session.role !== "student") {
+        window.location.href = "admindashboard.html";
+        return false;
+    }
+
+    if (!isAdminPage && !isStudentPage) {
+        window.location.href = "homepage.html";
         return false;
     }
 
     if (session.role === "student") {
         currentStudent = students.find(
-            student => student.id === session.studentId
+            student => student.id === String(session.studentId)
         );
 
         if (!currentStudent) {
             alert("Student record not found. Please login again.");
             clearSession();
-            window.location.href = "index.html";
+            window.location.href = "homepage.html";
             return false;
         }
     }
@@ -1200,9 +1034,8 @@ function protectPage() {
     return true;
 }
 
-
 /* =====================================================
-   23. INITIALIZE ALL PAGES
+   20. PAGE INITIALIZATION
 ===================================================== */
 
 function initializeSystem() {
@@ -1212,80 +1045,44 @@ function initializeSystem() {
 
     const page = window.location.pathname.split("/").pop().toLowerCase();
 
-    // LOGIN PAGE
-    if (page === "" || page === "index.html") {
-        showLogin("student");
-        return;
-    }
-
-    // ADMIN DASHBOARD
-    if (page === "homepage.html") {
-
-    if (getElement("adminPage")) {
-        getElement("adminPage").classList.remove("hidden");
-    }
-
-    if (getElement("studentPage")) {
-        getElement("studentPage").classList.add("hidden");
-    }
-
-    renderStudents();
-    updateStats();
-    renderPendingPayments();
-}
-
-    // STUDENTS PAGE
-    if (page === "students.html") {
+    if (page === "admindashboard.html") {
         renderStudents();
+        updateStats();
+        renderPendingPayments();
         updateTuitionPreview();
     }
 
-    // PAYMENTS PAGE
-    if (page === "payments.html") {
-        initializePaymentsPage();
-    }
-
-    // PERMITS PAGE
-    if (page === "permits.html") {
-        renderPermitPage();
-    }
-
-    // REPORTS PAGE
-    if (page === "reports.html") {
-        renderReports();
-    }
-
-    // SETTINGS PAGE
-    if (page === "settings.html") {
-        loadSettings();
-    }
-
-    // STUDENT DASHBOARD
     if (page === "student-dashboard.html") {
         loadStudentDashboard();
     }
 
-    // TUITION INPUT LISTENERS
+    // Tuition preview inputs
     ["tuitionExact", "discountPercent", "paidExact"].forEach(id => {
-        if (getElement(id)) {
-            getElement(id).addEventListener("input", updateTuitionPreview);
+        const element = getElement(id);
+
+        if (element) {
+            element.addEventListener("input", updateTuitionPreview);
         }
     });
 
-    // STUDENT SEARCH AND FILTERS
+    // Student table search and filters
     ["searchStudent", "filterSection"].forEach(id => {
-        if (getElement(id)) {
-            getElement(id).addEventListener("input", filterStudents);
+        const element = getElement(id);
+
+        if (element) {
+            element.addEventListener("input", filterStudents);
         }
     });
 
     ["filterCourse", "filterYear"].forEach(id => {
-        if (getElement(id)) {
-            getElement(id).addEventListener("change", filterStudents);
+        const element = getElement(id);
+
+        if (element) {
+            element.addEventListener("change", filterStudents);
         }
     });
 
-    // PERMIT SEARCH AND FILTER
+    // Permit search and filter
     if (getElement("permitSearch")) {
         getElement("permitSearch").addEventListener("input", renderPermitPage);
     }
@@ -1294,7 +1091,7 @@ function initializeSystem() {
         getElement("permitFilter").addEventListener("change", renderPermitPage);
     }
 
-    // REPORT SEARCH AND FILTER
+    // Reports search and filter
     if (getElement("reportSearch")) {
         getElement("reportSearch").addEventListener("input", renderReports);
     }
@@ -1304,6 +1101,4 @@ function initializeSystem() {
     }
 }
 
-
-// Start after HTML loads
 document.addEventListener("DOMContentLoaded", initializeSystem);

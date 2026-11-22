@@ -1,0 +1,343 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ACeS Sync | Admin Dashboard</title>
+
+    <!-- ADMIN DASHBOARD CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin-dashboard.css">
+    <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/feature.css">
+
+    <style>
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+<section id="adminPage" class="page">
+
+    <div class="admin-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-brand">
+
+                <div class="sidebar-logo">
+                    <img src="../image.jpg"
+                         alt="ACLC College Mandaue Logo">
+                </div>
+
+                <h2>ACLC Mandaue</h2>
+                <p>ACeS Sync • 2026-2027</p>
+
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Admin navigation">
+
+                <a class="active" href="#adminOverview">
+                    ▦ <span>Dashboard</span>
+                </a>
+
+                <a href="#studentRecords">
+                    ♙ <span>Students</span>
+                </a>
+
+                <a href="#addStudentSection">
+                    + <span>Add Student</span>
+                </a>
+
+                <a href="#paymentVerification">
+                    ▤ <span>Payments</span>
+                </a>
+
+            </nav>
+
+            <div class="version">
+                Portfolio Edition<br>
+                v2026.27
+            </div>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main">
+
+            <!-- TOPBAR -->
+            <header class="topbar" id="adminOverview">
+
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p>Student and payment management</p>
+                </div>
+
+                <div class="admin-user">
+
+                    <strong>Admin / Cashier</strong>
+                    <small>Administrator</small>
+
+                    <button type="button"
+                            class="logout-button"
+                            onclick="logout()">
+                        ⇥ Logout
+                    </button>
+
+                </div>
+
+            </header>
+
+            <!-- STATISTICS -->
+            <section class="stats-grid">
+
+                <article class="stat-card">
+                    <span class="stat-icon">♙</span>
+                    <p>Total Students</p>
+                    <h2 id="totalStudents">0</h2>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-icon">▣</span>
+                    <p>Total Payments</p>
+                    <h2 id="totalPayments">₱0.00</h2>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-icon">▤</span>
+                    <p>Exam Permits</p>
+                    <h2 id="permitsCount">0</h2>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-icon">▧</span>
+                    <p>Latest Permit</p>
+                    <h2 id="lastPermit" class="latest-permit">—</h2>
+                    <small id="lastPermitDate">No permits yet</small>
+                </article>
+
+            </section>
+
+            <!-- ADMIN CONTENT -->
+            <div class="admin-content">
+
+                <!-- STUDENT RECORDS -->
+                <section class="table-box" id="studentRecords">
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>Student Records</h2>
+                            <p>Manage enrolled students and payment status.</p>
+                        </div>
+                    </div>
+
+                    <div class="filters">
+
+                        <input type="search"
+                               id="searchStudent"
+                               placeholder="Search Student ID or Name">
+
+                        <select id="filterCourse">
+                            <option value="">All Courses</option>
+                            <option>BSIT</option>
+                            <option>BSCS</option>
+                            <option>BSBA</option>
+                            <option>BSTM</option>
+                            <option>BSA</option>
+                            <option>BSHM</option>
+                            <option>ABM</option>
+                            <option>HUMSS</option>
+                            <option>STEM</option>
+                            <option>Home economics</option>
+                            <option>IA EPAS (Electronics)</option>
+                            <option>ICT Animation</option>
+                            <option>ICT Programming</option>
+                        </select>
+
+                        <select id="filterYear">
+                            <option value="">All Years</option>
+                            <option>Grade 11</option>
+                            <option>Grade 12</option>
+                            <option>1st Year</option>
+                            <option>2nd Year</option>
+                            <option>3rd Year</option>
+                            <option>4th Year</option>
+                        </select>
+
+                        <input type="search"
+                               id="filterSection"
+                               placeholder="Section">
+
+                    </div>
+
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Course</th>
+                                    <th>Year</th>
+                                    <th>Section</th>
+                                    <th>Tuition</th>
+                                    <th>Paid</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="adminTable"></tbody>
+                        </table>
+                    </div>
+
+                    <p id="countText" class="count-text">
+                        Showing 0 students
+                    </p>
+
+                </section>
+
+                <!-- ADD STUDENT -->
+                <section class="add-student" id="addStudentSection">
+
+                    <h2>Add Student</h2>
+                    <p>Register an enrolled student.</p>
+
+                    <label for="studentID">Student ID</label>
+                    <input type="text"
+                           id="studentID"
+                           placeholder="Example: ACLC-2026-001">
+
+                    <label for="studentName">Full Name</label>
+                    <input type="text"
+                           id="studentName"
+                           placeholder="Student full name">
+
+                    <label for="studentGrade">Grade / Year</label>
+                    <select id="studentGrade">
+                        <option value="">Select Grade / Year</option>
+                        <option>Grade 11</option>
+                        <option>Grade 12</option>
+                        <option>1st Year</option>
+                        <option>2nd Year</option>
+                        <option>3rd Year</option>
+                        <option>4th Year</option>
+                    </select>
+
+                    <label for="studentCourse">Course</label>
+                    <select id="studentCourse">
+                        <option value="">Select Course</option>
+                        <option>BSIT</option>
+                        <option>BSCS</option>
+                        <option>BSBA</option>
+                        <option>BSTM</option>
+                        <option>BSA</option>
+                        <option>BSHM</option>
+                        <option>ABM</option>
+                        <option>HUMSS</option>
+                        <option>STEM</option>
+                        <option>Home economics</option>
+                        <option>IA EPAS (Electronics)</option>
+                        <option>ICT Animation</option>
+                        <option>ICT Programming</option>
+                    </select>
+
+                    <label for="studentSectionAdmin">Section</label>
+                    <input type="text"
+                           id="studentSectionAdmin"
+                           placeholder="Example: 3A">
+
+                    <label for="tuitionExact">Tuition Fee (₱)</label>
+                    <input type="number"
+                           id="tuitionExact"
+                           placeholder="Enter amount"
+                           min="0"
+                           step="0.01">
+
+                    <label for="discountPercent">
+                        Scholar / Honor Discount (%)
+                    </label>
+                    <input type="number"
+                           id="discountPercent"
+                           placeholder="0"
+                           min="0"
+                           max="100"
+                           value="0">
+
+                    <label for="paidExact">Initial Amount Paid (₱)</label>
+                    <input type="number"
+                           id="paidExact"
+                           placeholder="0"
+                           min="0"
+                           step="0.01"
+                           value="0">
+
+                    <div class="student-preview">
+                        <div>
+                            <span>Discounted Tuition</span>
+                            <strong id="discountedTuition">₱0.00</strong>
+                        </div>
+
+                        <div>
+                            <span>Remaining Balance</span>
+                            <strong id="initialBalance">₱0.00</strong>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+
+                        <button type="button"
+                                class="gold-button"
+                                onclick="addStudent()">
+                            + Add Student
+                        </button>
+
+                        <button type="button"
+                                class="white-button"
+                                onclick="clearStudentForm()">
+                            Clear
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <!-- PAYMENT VERIFICATION -->
+            <section class="verification-box"
+                     id="paymentVerification">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Payment Verification</h2>
+                        <p>Review and verify student payments.</p>
+                    </div>
+                </div>
+
+                <div id="pendingPayments">
+                    <p class="empty-state">
+                        No pending payments.
+                    </p>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</section>
+
+<!-- ADMIN DASHBOARD JAVASCRIPT -->
+<script src="../js/admin-dashboard.js" defer></script>
+<script src="../js/menu.js" defer></script>
+<script src="../js/feature.js" defer></script>
+
+</body>
+</html>

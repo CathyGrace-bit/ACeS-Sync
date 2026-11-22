@@ -1,0 +1,446 @@
+
+/* =========================================
+   ACeS SYNC - EXAM PERMITS
+   NAVY BLUE + GOLD + WHITE THEME
+========================================= */
+
+:root {
+    --navy: #071d43;
+    --navy-light: #102f66;
+    --navy-soft: #173b75;
+    --gold: #f5a623;
+    --gold-light: #ffbd4a;
+    --white: #ffffff;
+    --background: #f4f6fa;
+    --text: #17243b;
+    --muted: #758198;
+    --border: #dce3ee;
+    --green: #16845b;
+    --red: #d94b4b;
+    --shadow: 0 8px 24px rgba(7, 29, 67, 0.09);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+/* =========================================
+   ADMIN LAYOUT
+========================================= */
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    min-height: 100vh;
+    height: 100vh;
+    padding: 25px 18px;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, var(--navy), var(--navy-light));
+    color: var(--white);
+    position: sticky;
+    top: 0;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 5px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-brand img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+    background: var(--white);
+    border: 3px solid var(--gold);
+    border-radius: 50%;
+    padding: 3px;
+}
+
+.sidebar-brand h2 {
+    font-family: Georgia, serif;
+    font-size: 19px;
+    color: var(--white);
+}
+
+.sidebar-brand small {
+    display: block;
+    margin-top: 4px;
+    color: var(--gold-light);
+    font-size: 12px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+.sidebar-nav a {
+    display: block;
+    padding: 14px 16px;
+    border-radius: 9px;
+    color: #e7edf7;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+    background: var(--gold);
+    color: var(--navy);
+}
+
+.logout-button {
+    width: 100%;
+    margin-top: auto;
+    padding: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 9px;
+    background: transparent;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.logout-button:hover {
+    background: var(--red);
+    border-color: var(--red);
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+.admin-main {
+    flex: 1;
+    min-width: 0;
+    padding: 30px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding: 25px 28px;
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+}
+
+.page-header h1 {
+    color: var(--navy);
+    font-family: Georgia, serif;
+    font-size: 28px;
+    margin-bottom: 7px;
+}
+
+.page-header p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.admin-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* =========================================
+   PERMIT STATISTICS
+========================================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    min-height: 125px;
+    display: flex;
+    align-items: center;
+    padding: 25px;
+    background: var(--white);
+    border-radius: 13px;
+    border-top: 4px solid var(--gold);
+    box-shadow: var(--shadow);
+}
+
+.stat-card p {
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stat-card h2 {
+    color: var(--navy);
+    font-size: 27px;
+    font-weight: 700;
+}
+
+/* =========================================
+   CONTENT BOXES
+========================================= */
+
+.table-box {
+    padding: 26px;
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.section-heading {
+    margin-bottom: 22px;
+}
+
+.table-box h2 {
+    margin-bottom: 10px;
+    color: var(--navy);
+    font-family: Georgia, serif;
+    font-size: 21px;
+}
+
+.table-box p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   FILTERS
+========================================= */
+
+.filter-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.filter-row input,
+.filter-row select {
+    min-height: 45px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+}
+
+.filter-row input {
+    flex: 1;
+    min-width: 180px;
+}
+
+.filter-row select {
+    min-width: 190px;
+    cursor: pointer;
+}
+
+.filter-row input:focus,
+.filter-row select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.13);
+}
+
+/* =========================================
+   PERMIT TABLE
+========================================= */
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+thead {
+    background: var(--navy);
+    color: var(--white);
+}
+
+th {
+    padding: 15px 13px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+td {
+    padding: 14px 13px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+tbody tr:hover {
+    background: #f8f9fc;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.empty-state {
+    padding: 25px !important;
+    text-align: center;
+    color: var(--muted) !important;
+    background: #f8f9fc;
+}
+
+/* =========================================
+   PERMIT STATUS
+========================================= */
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-generated {
+    background: #dff5e9;
+    color: var(--green);
+}
+
+.status-not-generated {
+    background: #fff1d6;
+    color: #9b6500;
+}
+
+.status-rejected {
+    background: #fde5e5;
+    color: var(--red);
+}
+
+/* =========================================
+   COUNT TEXT
+========================================= */
+
+.count-text {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: right;
+}
+
+/* =========================================
+   PERMIT INFORMATION
+========================================= */
+
+.guidelines-box p {
+    margin-top: 12px;
+    line-height: 1.8;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 1000px) {
+    .sidebar {
+        width: 220px;
+        min-width: 220px;
+    }
+
+    .admin-main {
+        padding: 22px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .admin-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-width: 100%;
+        min-height: auto;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar-nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 20px;
+    }
+
+    .logout-button {
+        margin-top: 20px;
+    }
+
+    .admin-main {
+        padding: 16px;
+    }
+
+    .page-header {
+        padding: 20px;
+    }
+
+    .page-header h1 {
+        font-size: 23px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-row {
+        flex-direction: column;
+    }
+
+    .filter-row input,
+    .filter-row select {
+        width: 100%;
+    }
+
+    .table-box {
+        padding: 18px;
+    }
+}

@@ -1,0 +1,643 @@
+
+/* =====================================================
+   ACeS SYNC - ACLC MANDAUE
+   LOGIN PAGE DESIGN
+   NAVY BLUE + GOLD + WHITE
+===================================================== */
+
+/* GLOBAL VARIABLES */
+
+:root {
+    --navy: #071d43;
+    --navy-light: #102f66;
+    --navy-soft: #173b75;
+
+    --gold: #d9a441;
+    --gold-light: #f5c96a;
+
+    --white: #ffffff;
+    --background: #f4f6fa;
+
+    --text: #17243b;
+    --muted: #758198;
+    --border: #dce3ee;
+
+    --shadow: 0 8px 24px rgba(7, 29, 67, 0.09);
+}
+
+/* RESET */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =====================================================
+   MAIN LOGIN LAYOUT
+===================================================== */
+
+.login-wrap {
+    display: grid;
+    grid-template-columns: 43% 57%;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* =====================================================
+   LEFT BRANDING PANEL
+===================================================== */
+
+.login-brand {
+    position: relative;
+    isolation: isolate;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100vh;
+    padding: 50px 35px;
+
+    overflow: hidden;
+
+    text-align: center;
+    color: var(--white);
+
+    background:
+        linear-gradient(
+            135deg,
+            #061735 0%,
+            #0b2450 55%,
+            #102f66 100%
+        );
+}
+
+/* GOLD CIRCULAR DETAILS */
+
+.login-brand::before,
+.login-brand::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+
+    width: 430px;
+    height: 430px;
+
+    border: 1px solid rgba(217, 164, 65, 0.23);
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.login-brand::before {
+    top: -230px;
+    left: -190px;
+}
+
+.login-brand::after {
+    bottom: -240px;
+    right: -200px;
+}
+
+/* GEOMETRIC GOLD NETWORK */
+
+.gold-network {
+    position: absolute;
+    z-index: 0;
+
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 190px;
+
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+/* BRAND CONTENT */
+
+.brand-content {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: 440px;
+}
+
+/* SCHOOL LOGO */
+
+.school-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 165px;
+    height: 165px;
+
+    margin: 0 auto 25px;
+    padding: 7px;
+
+    background: var(--white);
+    border: 4px solid var(--gold);
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 7px rgba(217, 164, 65, 0.13),
+        0 12px 30px rgba(0, 0, 0, 0.25);
+
+    overflow: hidden;
+}
+
+.school-logo img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+/* BRAND TEXT */
+
+.login-brand h2 {
+    margin-bottom: 9px;
+
+    color: var(--gold-light);
+
+    font-family: Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.login-brand h1 {
+    margin-bottom: 13px;
+
+    color: var(--white);
+
+    font-family: Georgia, serif;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.tagline {
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* =====================================================
+   GOLD ORNAMENTAL DIVIDER
+===================================================== */
+
+.gold-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 85%;
+    max-width: 290px;
+
+    margin: 24px auto;
+}
+
+.gold-line-side {
+    flex: 1;
+
+    height: 1px;
+
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--gold),
+        var(--gold-light)
+    );
+}
+
+.gold-line-side:last-child {
+    background: linear-gradient(
+        to left,
+        transparent,
+        var(--gold),
+        var(--gold-light)
+    );
+}
+
+.gold-line-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 27px;
+    height: 27px;
+
+    margin: 0 13px;
+
+    color: var(--gold-light);
+    font-size: 25px;
+    line-height: 1;
+}
+
+/* FEATURES */
+
+.features {
+    color: var(--white);
+    font-size: 13px;
+    letter-spacing: 1.2px;
+}
+
+.features span {
+    padding: 0 7px;
+    color: var(--gold-light);
+}
+
+/* COPYRIGHT */
+
+.copyright {
+    position: absolute;
+    z-index: 2;
+
+    bottom: 23px;
+    left: 15px;
+    right: 15px;
+
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 12px;
+    text-align: center;
+}
+
+/* =====================================================
+   RIGHT LOGIN PANEL
+===================================================== */
+
+.login-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100vh;
+    padding: 40px 35px;
+
+    background: var(--background);
+}
+
+.login-panel-inner {
+    width: 100%;
+    max-width: 510px;
+}
+
+/* LOGIN HEADING */
+
+.login-heading {
+    margin-bottom: 27px;
+    text-align: center;
+}
+
+.login-heading h1 {
+    margin-bottom: 11px;
+
+    color: var(--navy);
+
+    font-family: Georgia, serif;
+    font-size: 34px;
+}
+
+.login-heading p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* =====================================================
+   LOGIN TABS
+===================================================== */
+
+.login-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    margin-bottom: 23px;
+}
+
+.tab {
+    min-height: 53px;
+    padding: 12px 9px;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: var(--white);
+    color: var(--navy);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.tab:hover {
+    border-color: var(--gold);
+    background: #fffaf0;
+}
+
+.tab.active {
+    border-color: var(--navy);
+    background: var(--navy);
+    color: var(--white);
+
+    box-shadow: 0 5px 14px rgba(7, 29, 67, 0.16);
+}
+
+/* =====================================================
+   LOGIN FORM
+===================================================== */
+
+.login-form {
+    width: 100%;
+    padding: 27px 30px;
+
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--gold);
+    border-radius: 13px;
+
+    background: var(--white);
+    box-shadow: var(--shadow);
+}
+
+.login-form h2 {
+    margin-bottom: 22px;
+
+    color: var(--navy);
+
+    font-family: Georgia, serif;
+    font-size: 22px;
+}
+
+/* FORM ROW */
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    margin-bottom: 16px;
+}
+
+.form-row label {
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* INPUTS */
+
+.form-row input,
+.form-row select {
+    width: 100%;
+    height: 45px;
+    padding: 0 13px;
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    outline: none;
+
+    background: var(--white);
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 14px;
+
+    transition: 0.2s ease;
+}
+
+.form-row input::placeholder {
+    color: #a3adbd;
+}
+
+.form-row input:focus,
+.form-row select:focus {
+    border-color: var(--gold);
+
+    box-shadow:
+        0 0 0 3px rgba(217, 164, 65, 0.14);
+}
+
+/* =====================================================
+   LOGIN BUTTON
+===================================================== */
+
+.primary-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 48px;
+
+    padding: 12px 18px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: linear-gradient(
+        135deg,
+        var(--navy),
+        var(--navy-light)
+    );
+
+    color: var(--white);
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.primary-btn:hover {
+    background: linear-gradient(
+        135deg,
+        var(--navy-light),
+        var(--navy-soft)
+    );
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 16px rgba(7, 29, 67, 0.2);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+}
+
+.full-btn {
+    margin-top: 9px;
+}
+
+/* MESSAGES */
+
+.message {
+    min-height: 20px;
+    margin-top: 12px;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.demo-note {
+    margin-top: 16px;
+    padding: 10px;
+
+    border: 1px dashed var(--gold);
+    border-radius: 7px;
+
+    background: #fffaf0;
+    color: var(--muted);
+
+    font-size: 12px;
+    text-align: center;
+}
+
+.demo-note strong {
+    color: var(--navy);
+}
+
+/* =====================================================
+   TABLET RESPONSIVE
+===================================================== */
+
+@media (max-width: 950px) {
+
+    .login-wrap {
+        grid-template-columns: 40% 60%;
+    }
+
+    .login-brand {
+        padding: 35px 20px;
+    }
+
+    .school-logo {
+        width: 140px;
+        height: 140px;
+    }
+
+    .login-brand h1 {
+        font-size: 39px;
+    }
+
+    .login-brand h2 {
+        font-size: 20px;
+    }
+
+    .login-panel {
+        padding: 30px 22px;
+    }
+
+    .login-form {
+        padding: 24px 22px;
+    }
+}
+
+/* =====================================================
+   MOBILE RESPONSIVE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .login-wrap {
+        display: flex;
+        flex-direction: column;
+        overflow: visible;
+    }
+
+    .login-brand {
+        min-height: 440px;
+        padding: 35px 20px 45px;
+    }
+
+    .school-logo {
+        width: 115px;
+        height: 115px;
+        margin-bottom: 18px;
+    }
+
+    .login-brand h1 {
+        font-size: 35px;
+    }
+
+    .login-brand h2 {
+        font-size: 18px;
+    }
+
+    .gold-network {
+        height: 125px;
+    }
+
+    .copyright {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        right: auto;
+
+        margin-top: 32px;
+    }
+
+    .login-panel {
+        min-height: auto;
+        padding: 35px 18px 45px;
+    }
+
+    .login-heading h1 {
+        font-size: 29px;
+    }
+
+    .login-form {
+        padding: 22px 18px;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 380px) {
+
+    .login-tabs {
+        grid-template-columns: 1fr;
+    }
+
+    .tab {
+        min-height: 46px;
+    }
+
+    .login-brand h1 {
+        font-size: 30px;
+    }
+}

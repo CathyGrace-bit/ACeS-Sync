@@ -7,46 +7,71 @@
 
     <title>ACeS Sync - ACLC Mandaue | Login</title>
 
-    <!-- CSS FILES -->
+    <!-- LOGIN CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/menu.css">
-    <link rel="stylesheet" href="css/feature.css">
-
-    <style>
-        .hidden {
-            display: none !important;
-        }
-
-        .page {
-            width: 100%;
-            min-height: 100vh;
-        }
-    </style>
+    <link rel="stylesheet" href="css/login.css">
 </head>
 
 <body>
 
     <!-- LOGIN PAGE -->
-
-    <section id="loginPage" class="page login-wrap">
+    <main id="loginPage" class="login-wrap">
 
         <!-- LEFT BRANDING PANEL -->
-        <div class="login-brand">
+        <section class="login-brand">
+
+            <!-- GOLD DECORATIVE NETWORK LINES -->
+            <svg class="gold-network"
+                 viewBox="0 0 700 500"
+                 preserveAspectRatio="xMidYMid slice"
+                 aria-hidden="true">
+
+                <g fill="none"
+                   stroke="#d9a441"
+                   stroke-width="1.5"
+                   opacity="0.55">
+
+                    <path d="M0 350 L120 250 L240 310 L360 180 L500 230 L700 90"/>
+                    <path d="M0 420 L150 320 L280 390 L420 260 L560 320 L700 210"/>
+                    <path d="M60 500 L180 390 L310 450 L460 340 L610 400 L700 340"/>
+                    <path d="M120 0 L220 100 L340 50 L460 150 L580 80 L700 160"/>
+
+                </g>
+
+                <g fill="#d9a441" opacity="0.8">
+                    <circle cx="120" cy="250" r="4"/>
+                    <circle cx="240" cy="310" r="4"/>
+                    <circle cx="360" cy="180" r="4"/>
+                    <circle cx="500" cy="230" r="4"/>
+                    <circle cx="150" cy="320" r="4"/>
+                    <circle cx="420" cy="260" r="4"/>
+                    <circle cx="560" cy="320" r="4"/>
+                    <circle cx="340" cy="50" r="4"/>
+                    <circle cx="460" cy="150" r="4"/>
+                </g>
+
+            </svg>
+
             <div class="brand-content">
 
                 <div class="school-logo">
-                    <img src="image.jpg" alt="ACLC College Mandaue Logo">
+                    <img src="image.jpg"
+                         alt="ACLC College Mandaue Logo">
                 </div>
 
                 <h2>ACLC MANDAUE</h2>
+
                 <h1>ACeS Sync</h1>
 
                 <p class="tagline">
                     Connecting Students &amp; Administration
                 </p>
 
+                <!-- GOLD DECORATIVE DIVIDER -->
                 <div class="gold-line">
-                    <span>∞</span>
+                    <span class="gold-line-side"></span>
+                    <span class="gold-line-center">◆</span>
+                    <span class="gold-line-side"></span>
                 </div>
 
                 <p class="features">
@@ -60,21 +85,24 @@
             <p class="copyright">
                 © 2026 ACLC Mandaue City
             </p>
-        </div>
+
+        </section>
 
 
         <!-- RIGHT LOGIN PANEL -->
-        <div class="login-panel">
+        <section class="login-panel">
 
             <div class="login-panel-inner">
 
                 <div class="login-heading">
+
                     <h1>Login Dashboard</h1>
 
                     <p>
                         Access the ACeS Sync system.
                         Choose your login type to continue.
                     </p>
+
                 </div>
 
 
@@ -83,16 +111,24 @@
 
                     <button
                         type="button"
+                        id="studentTab"
                         class="tab active"
+                        aria-selected="true"
                         onclick="showLogin('student')">
+
                         🎓 Student Login
+
                     </button>
 
                     <button
                         type="button"
+                        id="adminTab"
                         class="tab"
+                        aria-selected="false"
                         onclick="showLogin('admin')">
+
                         🛡️ Admin / Cashier
+
                     </button>
 
                 </div>
@@ -172,6 +208,7 @@
 
                         <span>➜</span>
                         Login as Student
+
                     </button>
 
                     <p
@@ -215,6 +252,7 @@
 
                         <span>➜</span>
                         Login as Admin / Cashier
+
                     </button>
 
                     <p
@@ -232,16 +270,14 @@
                 </div>
 
             </div>
-        </div>
 
-    </section>
+        </section>
+
+    </main>
 
 
-    <!-- JAVASCRIPT FILES -->
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase.js" defer></script>
-    <script src="js/Script.js" defer></script>
+    <!-- LOGIN JAVASCRIPT -->
+    <script src="js/login.js" defer></script>
 
 </body>
 </html>
