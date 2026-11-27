@@ -564,3 +564,253 @@ button {
         font-size: 12px;
     }
 }
+
+/* =========================================
+   STUDENT DASHBOARD - HAMBURGER MENU
+========================================= */
+
+/* HEADER LAYOUT */
+
+.student-header {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+}
+
+.student-header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 0;
+}
+
+/* HAMBURGER BUTTON */
+
+.student-menu-toggle {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 8px;
+
+    background: var(--navy-light);
+    color: var(--white);
+
+    font-size: 25px;
+    transition: 0.2s ease;
+}
+
+.student-menu-toggle:hover {
+    background: var(--gold);
+    color: var(--navy);
+}
+
+/* SIDEBAR */
+
+.student-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 270px;
+    max-width: 85vw;
+
+    display: flex;
+    flex-direction: column;
+
+    background: linear-gradient(
+        180deg,
+        var(--navy),
+        var(--navy-light)
+    );
+
+    color: var(--white);
+
+    z-index: 300;
+
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+
+    box-shadow: 5px 0 25px rgba(0,0,0,0.15);
+}
+
+body.student-menu-open .student-sidebar {
+    transform: translateX(0);
+}
+
+/* SIDEBAR BRAND */
+
+.student-sidebar-brand {
+    padding: 27px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.student-sidebar-brand strong {
+    color: var(--gold);
+    font-family: Georgia, serif;
+    font-size: 23px;
+}
+
+.student-sidebar-brand span {
+    color: #d5dfef;
+    font-size: 12px;
+}
+
+/* SIDEBAR NAVIGATION */
+
+.student-sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 12px;
+}
+
+.student-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    margin-bottom: 7px;
+    padding: 13px 15px;
+
+    border-radius: 8px;
+
+    color: #e2e9f4;
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.student-nav-link span {
+    width: 22px;
+    text-align: center;
+    color: var(--gold);
+    font-size: 19px;
+}
+
+.student-nav-link:hover,
+.student-nav-link.active {
+    background: var(--gold);
+    color: var(--navy);
+}
+
+.student-nav-link:hover span,
+.student-nav-link.active span {
+    color: var(--navy);
+}
+
+/* SIDEBAR FOOTER */
+
+.student-sidebar-footer {
+    padding: 18px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.student-sidebar-logout {
+    width: 100%;
+    padding: 12px;
+
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+
+    background: transparent;
+    color: var(--gold);
+
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.student-sidebar-logout:hover {
+    background: var(--gold);
+    color: var(--navy);
+}
+
+/* SIDEBAR OVERLAY */
+
+.student-menu-overlay {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,0.45);
+
+    z-index: 250;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: 0.3s ease;
+}
+
+body.student-menu-open .student-menu-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* CONTENT SCROLL POSITION */
+
+.student-page-content {
+    scroll-behavior: smooth;
+}
+
+.student-page-content [id] {
+    scroll-margin-top: 115px;
+}
+
+/* RESPONSIVE HEADER */
+
+@media (max-width: 600px) {
+
+    .student-header {
+        flex-direction: row;
+        align-items: center;
+        padding: 13px 4%;
+        gap: 10px;
+    }
+
+    .student-header-left {
+        gap: 10px;
+    }
+
+    .student-brand {
+        gap: 7px;
+    }
+
+    .student-brand strong {
+        font-size: 18px;
+    }
+
+    .student-brand span {
+        font-size: 10px;
+    }
+
+    .student-header-actions {
+        width: auto;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+        font-size: 10px;
+    }
+
+    .student-header-actions .logout-button {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .student-menu-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+    }
+
+}

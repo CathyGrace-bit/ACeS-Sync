@@ -7,95 +7,249 @@
 
     <title>ACeS Sync | Admin Dashboard</title>
 
-    <!-- ADMIN DASHBOARD CSS -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/admin-dashboard.css">
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/feature.css">
-
-    <style>
-        .hidden {
-            display: none !important;
-        }
-    </style>
 </head>
 
 <body>
 
 <section id="adminPage" class="page">
 
-    <div class="admin-layout">
+<div class="admin-layout">
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-            <div class="sidebar-brand">
+        <div class="sidebar-brand">
+            <div class="sidebar-logo">
+                <img src="../image.jpg" alt="ACLC College Mandaue Logo">
+            </div>
 
-                <div class="sidebar-logo">
-                    <img src="../image.jpg"
-                         alt="ACLC College Mandaue Logo">
+            <h2>ACLC Mandaue</h2>
+            <p>ACeS Sync • 2026-2027</p>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Admin navigation">
+
+            <a class="active" href="#dashboardSection" data-page="dashboardSection">
+                ▦ <span>Dashboard</span>
+            </a>
+
+            <a href="#studentRecords" data-page="studentRecords">
+                ♙ <span>Students</span>
+            </a>
+
+            <a href="#addStudentSection" data-page="addStudentSection">
+                + <span>Add Student</span>
+            </a>
+
+            <a href="#importStudents" data-page="importStudents">
+                ⇧ <span>Import Students</span>
+            </a>
+
+            <a href="#paymentVerification" data-page="paymentVerification">
+                ▤ <span>Payments</span>
+            </a>
+
+            <a href="#acesPermits" data-page="acesPermits">
+                ▣ <span>Exam Permits</span>
+            </a>
+
+            <a href="#feeManagement" data-page="feeManagement">
+                ₱ <span>Fee Management</span>
+            </a>
+
+            <a href="#announcements" data-page="announcements">
+                ◉ <span>Announcements</span>
+            </a>
+
+            <a href="#studentConcerns" data-page="studentConcerns">
+                ✉ <span>Student Concerns</span>
+            </a>
+
+            <a href="#quickReports" data-page="quickReports">
+                ▧ <span>Reports</span>
+            </a>
+
+        </nav>
+
+        <div class="version">
+            Portfolio Edition<br>
+            v2026.27
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button type="button"
+                        class="menu-toggle"
+                        id="menuToggle"
+                        aria-label="Open navigation menu"
+                        aria-expanded="false">
+                    ☰
+                </button>
+
+                <div class="page-heading">
+                    <h1 id="pageTitle">Admin Dashboard</h1>
+                    <p id="pageSubtitle">Student and payment management</p>
                 </div>
 
-                <h2>ACLC Mandaue</h2>
-                <p>ACeS Sync • 2026-2027</p>
+            </div>
+
+            <div class="topbar-right">
+
+                <!-- GLOBAL SEARCH -->
+                <div class="global-search">
+                    <span>⌕</span>
+                    <input type="search"
+                           id="globalSearch"
+                           placeholder="Search students, payments, permits..."
+                           aria-label="Search dashboard">
+                </div>
+
+                <!-- CALENDAR -->
+                <button type="button"
+                        class="topbar-icon-button"
+                        id="calendarToggle"
+                        title="Calendar"
+                        aria-label="Open calendar">
+                    📅
+                </button>
+
+                <!-- NOTIFICATIONS -->
+                <button type="button"
+                        class="topbar-icon-button notification-button"
+                        id="notificationToggle"
+                        title="Notifications"
+                        aria-label="Open notifications">
+                    🔔
+                    <span class="notification-count hidden"
+                          id="notificationCount">0</span>
+                </button>
+
+                <!-- ADMIN PROFILE -->
+                <div class="admin-profile" id="adminProfile">
+
+                    <div class="profile-avatar">A</div>
+
+                    <div class="profile-details">
+                        <strong>Admin / Cashier</strong>
+                        <small>Administrator</small>
+                    </div>
+
+                </div>
+
+                <button type="button"
+                        class="logout-button"
+                        onclick="logout()">
+                    ⇥ Logout
+                </button>
 
             </div>
 
-            <nav class="sidebar-nav" aria-label="Admin navigation">
+        </header>
 
-                <a class="active" href="#adminOverview">
-                    ▦ <span>Dashboard</span>
-                </a>
 
-                <a href="#studentRecords">
-                    ♙ <span>Students</span>
-                </a>
+        <!-- CALENDAR PANEL -->
+        <div class="topbar-panel hidden" id="calendarPanel">
 
-                <a href="#addStudentSection">
-                    + <span>Add Student</span>
-                </a>
-
-                <a href="#paymentVerification">
-                    ▤ <span>Payments</span>
-                </a>
-
-            </nav>
-
-            <div class="version">
-                Portfolio Edition<br>
-                v2026.27
-            </div>
-
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <main class="admin-main">
-
-            <!-- TOPBAR -->
-            <header class="topbar" id="adminOverview">
-
+            <div class="panel-heading">
                 <div>
-                    <h1>Admin Dashboard</h1>
-                    <p>Student and payment management</p>
+                    <h2>School Calendar</h2>
+                    <p>Manage important school events</p>
                 </div>
 
-                <div class="admin-user">
+                <button type="button"
+                        class="panel-close"
+                        data-close-panel>
+                    ×
+                </button>
+            </div>
 
-                    <strong>Admin / Cashier</strong>
-                    <small>Administrator</small>
+            <div class="calendar-controls">
+                <button type="button" id="previousMonth">‹</button>
+                <strong id="calendarMonth">November 2026</strong>
+                <button type="button" id="nextMonth">›</button>
+            </div>
 
-                    <button type="button"
-                            class="logout-button"
-                            onclick="logout()">
-                        ⇥ Logout
-                    </button>
+            <div class="calendar-grid" id="calendarGrid"></div>
 
+            <div class="calendar-event-form">
+
+                <h3>Add School Event</h3>
+
+                <label for="eventTitle">Event Title</label>
+                <input type="text"
+                       id="eventTitle"
+                       placeholder="Example: Final Examination">
+
+                <label for="eventDate">Event Date</label>
+                <input type="date" id="eventDate">
+
+                <label for="eventTime">Event Time</label>
+                <input type="time" id="eventTime">
+
+                <label for="eventDescription">Description</label>
+                <textarea id="eventDescription"
+                          rows="2"
+                          placeholder="Event details"></textarea>
+
+                <button type="button"
+                        class="gold-button"
+                        id="addEventBtn">
+                    + Add Event
+                </button>
+
+            </div>
+
+            <div class="calendar-events">
+                <h3>Upcoming Events</h3>
+                <div id="upcomingEvents">
+                    <p class="empty-state">No upcoming events.</p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- NOTIFICATION PANEL -->
+        <div class="topbar-panel notification-panel hidden"
+             id="notificationPanel">
+
+            <div class="panel-heading">
+                <div>
+                    <h2>Notifications</h2>
+                    <p>Important dashboard updates</p>
                 </div>
 
-            </header>
+                <button type="button"
+                        class="panel-close"
+                        data-close-panel>
+                    ×
+                </button>
+            </div>
 
-            <!-- STATISTICS -->
-            <section class="stats-grid">
+            <div id="notificationList">
+                <p class="empty-state">No notifications yet.</p>
+            </div>
+
+        </div>
+
+
+        <!-- DASHBOARD OVERVIEW -->
+        <section class="admin-page-section" id="dashboardSection">
+
+            <div class="stats-grid">
 
                 <article class="stat-card">
                     <span class="stat-icon">♙</span>
@@ -122,222 +276,513 @@
                     <small id="lastPermitDate">No permits yet</small>
                 </article>
 
+            </div>
+
+            <section class="table-box">
+                <div class="section-heading">
+                    <div>
+                        <h2>Welcome to ACeS Sync</h2>
+                        <p>Administration and Collection Electronic System</p>
+                    </div>
+                </div>
+
+                <p>
+                    Manage student records, tuition fees, payments,
+                    exam permits, announcements, and student concerns
+                    in one place.
+                </p>
             </section>
 
-            <!-- ADMIN CONTENT -->
-            <div class="admin-content">
+        </section>
 
-                <!-- STUDENT RECORDS -->
-                <section class="table-box" id="studentRecords">
 
-                    <div class="section-heading">
-                        <div>
-                            <h2>Student Records</h2>
-                            <p>Manage enrolled students and payment status.</p>
-                        </div>
-                    </div>
+        <!-- STUDENT RECORDS -->
+        <section class="admin-page-section table-box hidden"
+                 id="studentRecords">
 
-                    <div class="filters">
+            <div class="section-heading">
+                <div>
+                    <h2>Student Records</h2>
+                    <p>Manage enrolled students and payment status.</p>
+                </div>
+            </div>
 
-                        <input type="search"
-                               id="searchStudent"
-                               placeholder="Search Student ID or Name">
+            <div class="filters">
 
-                        <select id="filterCourse">
-                            <option value="">All Courses</option>
-                            <option>BSIT</option>
-                            <option>BSCS</option>
-                            <option>BSBA</option>
-                            <option>BSTM</option>
-                            <option>BSA</option>
-                            <option>BSHM</option>
-                            <option>ABM</option>
-                            <option>HUMSS</option>
-                            <option>STEM</option>
-                            <option>Home economics</option>
-                            <option>IA EPAS (Electronics)</option>
-                            <option>ICT Animation</option>
-                            <option>ICT Programming</option>
-                        </select>
+                <input type="search"
+                       id="searchStudent"
+                       placeholder="Search Student ID or Name">
 
-                        <select id="filterYear">
-                            <option value="">All Years</option>
-                            <option>Grade 11</option>
-                            <option>Grade 12</option>
-                            <option>1st Year</option>
-                            <option>2nd Year</option>
-                            <option>3rd Year</option>
-                            <option>4th Year</option>
-                        </select>
+                <select id="filterCourse">
+                    <option value="">All Courses</option>
+                    <option>BSIT</option>
+                    <option>BSCS</option>
+                    <option>BSBA</option>
+                    <option>BSTM</option>
+                    <option>BSA</option>
+                    <option>BSHM</option>
+                    <option>ABM</option>
+                    <option>HUMSS</option>
+                    <option>STEM</option>
+                    <option>Home economics</option>
+                    <option>IA EPAS (Electronics)</option>
+                    <option>ICT Animation</option>
+                    <option>ICT Programming</option>
+                </select>
 
-                        <input type="search"
-                               id="filterSection"
-                               placeholder="Section">
+                <select id="filterYear">
+                    <option value="">All Years</option>
+                    <option>Grade 11</option>
+                    <option>Grade 12</option>
+                    <option>1st Year</option>
+                    <option>2nd Year</option>
+                    <option>3rd Year</option>
+                    <option>4th Year</option>
+                </select>
 
-                    </div>
-
-                    <div class="table-scroll">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Student ID</th>
-                                    <th>Name</th>
-                                    <th>Course</th>
-                                    <th>Year</th>
-                                    <th>Section</th>
-                                    <th>Tuition</th>
-                                    <th>Paid</th>
-                                    <th>Balance</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="adminTable"></tbody>
-                        </table>
-                    </div>
-
-                    <p id="countText" class="count-text">
-                        Showing 0 students
-                    </p>
-
-                </section>
-
-                <!-- ADD STUDENT -->
-                <section class="add-student" id="addStudentSection">
-
-                    <h2>Add Student</h2>
-                    <p>Register an enrolled student.</p>
-
-                    <label for="studentID">Student ID</label>
-                    <input type="text"
-                           id="studentID"
-                           placeholder="Example: ACLC-2026-001">
-
-                    <label for="studentName">Full Name</label>
-                    <input type="text"
-                           id="studentName"
-                           placeholder="Student full name">
-
-                    <label for="studentGrade">Grade / Year</label>
-                    <select id="studentGrade">
-                        <option value="">Select Grade / Year</option>
-                        <option>Grade 11</option>
-                        <option>Grade 12</option>
-                        <option>1st Year</option>
-                        <option>2nd Year</option>
-                        <option>3rd Year</option>
-                        <option>4th Year</option>
-                    </select>
-
-                    <label for="studentCourse">Course</label>
-                    <select id="studentCourse">
-                        <option value="">Select Course</option>
-                        <option>BSIT</option>
-                        <option>BSCS</option>
-                        <option>BSBA</option>
-                        <option>BSTM</option>
-                        <option>BSA</option>
-                        <option>BSHM</option>
-                        <option>ABM</option>
-                        <option>HUMSS</option>
-                        <option>STEM</option>
-                        <option>Home economics</option>
-                        <option>IA EPAS (Electronics)</option>
-                        <option>ICT Animation</option>
-                        <option>ICT Programming</option>
-                    </select>
-
-                    <label for="studentSectionAdmin">Section</label>
-                    <input type="text"
-                           id="studentSectionAdmin"
-                           placeholder="Example: 3A">
-
-                    <label for="tuitionExact">Tuition Fee (₱)</label>
-                    <input type="number"
-                           id="tuitionExact"
-                           placeholder="Enter amount"
-                           min="0"
-                           step="0.01">
-
-                    <label for="discountPercent">
-                        Scholar / Honor Discount (%)
-                    </label>
-                    <input type="number"
-                           id="discountPercent"
-                           placeholder="0"
-                           min="0"
-                           max="100"
-                           value="0">
-
-                    <label for="paidExact">Initial Amount Paid (₱)</label>
-                    <input type="number"
-                           id="paidExact"
-                           placeholder="0"
-                           min="0"
-                           step="0.01"
-                           value="0">
-
-                    <div class="student-preview">
-                        <div>
-                            <span>Discounted Tuition</span>
-                            <strong id="discountedTuition">₱0.00</strong>
-                        </div>
-
-                        <div>
-                            <span>Remaining Balance</span>
-                            <strong id="initialBalance">₱0.00</strong>
-                        </div>
-                    </div>
-
-                    <div class="button-group">
-
-                        <button type="button"
-                                class="gold-button"
-                                onclick="addStudent()">
-                            + Add Student
-                        </button>
-
-                        <button type="button"
-                                class="white-button"
-                                onclick="clearStudentForm()">
-                            Clear
-                        </button>
-
-                    </div>
-
-                </section>
+                <input type="search"
+                       id="filterSection"
+                       placeholder="Section">
 
             </div>
 
-            <!-- PAYMENT VERIFICATION -->
-            <section class="verification-box"
-                     id="paymentVerification">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Year</th>
+                            <th>Section</th>
+                            <th>Tuition</th>
+                            <th>Paid</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
 
-                <div class="section-heading">
-                    <div>
-                        <h2>Payment Verification</h2>
-                        <p>Review and verify student payments.</p>
-                    </div>
+                    <tbody id="adminTable"></tbody>
+                </table>
+            </div>
+
+            <p id="countText" class="count-text">
+                Showing 0 students
+            </p>
+
+        </section>
+
+
+        <!-- ADD STUDENT -->
+        <section class="admin-page-section add-student hidden"
+                 id="addStudentSection">
+
+            <h2>Add Student</h2>
+            <p>Register an enrolled student, including late enrollees.</p>
+
+            <label for="studentID">Student ID</label>
+            <input type="text" id="studentID"
+                   placeholder="Example: ACLC-2026-001">
+
+            <label for="studentName">Full Name</label>
+            <input type="text" id="studentName"
+                   placeholder="Student full name">
+
+            <label for="studentGrade">Grade / Year</label>
+            <select id="studentGrade">
+                <option value="">Select Grade / Year</option>
+                <option>Grade 11</option>
+                <option>Grade 12</option>
+                <option>1st Year</option>
+                <option>2nd Year</option>
+                <option>3rd Year</option>
+                <option>4th Year</option>
+            </select>
+
+            <label for="studentCourse">Course</label>
+            <select id="studentCourse">
+                <option value="">Select Course</option>
+                <option>BSIT</option>
+                <option>BSCS</option>
+                <option>BSBA</option>
+                <option>BSTM</option>
+                <option>BSA</option>
+                <option>BSHM</option>
+                <option>ABM</option>
+                <option>HUMSS</option>
+                <option>STEM</option>
+                <option>Home economics</option>
+                <option>IA EPAS (Electronics)</option>
+                <option>ICT Animation</option>
+                <option>ICT Programming</option>
+            </select>
+
+            <label for="studentSectionAdmin">Section</label>
+            <input type="text" id="studentSectionAdmin"
+                   placeholder="Example: 3A">
+
+            <label for="tuitionExact">Tuition Fee (₱)</label>
+            <input type="number" id="tuitionExact"
+                   placeholder="Enter amount" min="0" step="0.01">
+
+            <label for="discountPercent">Scholar / Honor Discount (%)</label>
+            <input type="number" id="discountPercent"
+                   placeholder="0" min="0" max="100" value="0">
+
+            <label for="paidExact">Initial Amount Paid (₱)</label>
+            <input type="number" id="paidExact"
+                   placeholder="0" min="0" step="0.01" value="0">
+
+            <div class="student-preview">
+                <div>
+                    <span>Discounted Tuition</span>
+                    <strong id="discountedTuition">₱0.00</strong>
                 </div>
 
-                <div id="pendingPayments">
-                    <p class="empty-state">
-                        No pending payments.
+                <div>
+                    <span>Remaining Balance</span>
+                    <strong id="initialBalance">₱0.00</strong>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="gold-button"
+                        onclick="addStudent()">
+                    + Add Student
+                </button>
+
+                <button type="button" class="white-button"
+                        onclick="clearStudentForm()">
+                    Clear
+                </button>
+            </div>
+
+        </section>
+
+
+        <!-- IMPORT STUDENTS -->
+        <section class="admin-page-section table-box hidden"
+                 id="importStudents">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Import Student Records</h2>
+                    <p>Upload a CSV file containing student information.</p>
+                </div>
+            </div>
+
+            <div class="import-instructions">
+                <h3>CSV File Instructions</h3>
+                <p>
+                    Prepare your student list in Excel and save it as CSV.
+                    You can import existing students or add late enrollees
+                    later using the Add Student page.
+                </p>
+
+                <p>Required columns:</p>
+                <code>studentID, studentName, course, year, section, tuition</code>
+            </div>
+
+            <label for="studentCsvFile">Choose CSV File</label>
+            <input type="file" id="studentCsvFile"
+                   accept=".csv,text/csv">
+
+            <div class="button-group">
+                <button type="button" class="gold-button"
+                        id="importCsvBtn">
+                    Import Students
+                </button>
+            </div>
+
+            <p id="importStatus" class="count-text" aria-live="polite">
+                No file imported yet.
+            </p>
+
+        </section>
+
+
+        <!-- PAYMENTS -->
+        <section class="admin-page-section verification-box hidden"
+                 id="paymentVerification">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Payment Verification</h2>
+                    <p>Review and verify student payment submissions.</p>
+                </div>
+            </div>
+
+            <div id="pendingPayments">
+                <p class="empty-state">No pending payments.</p>
+            </div>
+
+        </section>
+
+
+        <!-- EXAM PERMITS -->
+        <section class="admin-page-section table-box hidden"
+                 id="acesPermits">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Exam Permits</h2>
+                    <p>View permits generated for eligible students.</p>
+                </div>
+            </div>
+
+            <div class="permit-rule">
+                <h3>Permit Eligibility</h3>
+                <strong>₱4,000.00 Minimum Approved Payment</strong>
+                <p>
+                    A student becomes eligible when their approved
+                    payments for the same semester reach ₱4,000.
+                    Pending and rejected payments do not count.
+                </p>
+            </div>
+
+            <div class="filters">
+                <input type="search" id="searchPermit"
+                       placeholder="Search Student ID or Name">
+
+                <select id="permitSemester">
+                    <option value="">All Semesters</option>
+                    <option value="1st Semester">1st Semester</option>
+                    <option value="2nd Semester">2nd Semester</option>
+                    <option value="Summer">Summer</option>
+                </select>
+            </div>
+
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Permit Number</th>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Academic Year</th>
+                            <th>Semester</th>
+                            <th>Approved Payment</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="permitsTable">
+                        <tr>
+                            <td colspan="7">No permits generated yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+
+        <!-- FEE MANAGEMENT -->
+        <section class="admin-page-section table-box hidden"
+                 id="feeManagement">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Fee Management</h2>
+                    <p>Manage tuition fee schedules by course and year level.</p>
+                </div>
+            </div>
+
+            <form id="feeForm">
+
+                <label for="feeCourse">Course</label>
+                <select id="feeCourse" required>
+                    <option value="">Select Course</option>
+                    <option>BSIT</option>
+                    <option>BSCS</option>
+                    <option>BSBA</option>
+                    <option>BSTM</option>
+                    <option>BSA</option>
+                    <option>BSHM</option>
+                    <option>ABM</option>
+                    <option>HUMSS</option>
+                    <option>STEM</option>
+                    <option>Home economics</option>
+                    <option>IA EPAS (Electronics)</option>
+                    <option>ICT Animation</option>
+                    <option>ICT Programming</option>
+                </select>
+
+                <label for="feeYear">Grade / Year</label>
+                <select id="feeYear" required>
+                    <option value="">Select Grade / Year</option>
+                    <option>Grade 11</option>
+                    <option>Grade 12</option>
+                    <option>1st Year</option>
+                    <option>2nd Year</option>
+                    <option>3rd Year</option>
+                    <option>4th Year</option>
+                </select>
+
+                <label for="feeSemester">Semester</label>
+                <select id="feeSemester" required>
+                    <option value="">Select Semester</option>
+                    <option>1st Semester</option>
+                    <option>2nd Semester</option>
+                    <option>Summer</option>
+                </select>
+
+                <label for="feeAmount">Tuition / Required Fee (₱)</label>
+                <input type="number" id="feeAmount"
+                       min="0" step="0.01" required>
+
+                <button type="submit" class="gold-button">
+                    Save Fee Schedule
+                </button>
+
+            </form>
+
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Year</th>
+                            <th>Semester</th>
+                            <th>Fee Amount</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="feeTable">
+                        <tr>
+                            <td colspan="4">No fee schedules added yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+
+        <!-- ANNOUNCEMENTS -->
+        <section class="admin-page-section table-box hidden"
+                 id="announcements">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Announcements</h2>
+                    <p>Send school announcements to students.</p>
+                </div>
+            </div>
+
+            <form id="announcementForm">
+
+                <label for="announcementTitle">Announcement Title</label>
+                <input type="text" id="announcementTitle"
+                       placeholder="Enter announcement title" required>
+
+                <label for="announcementMessage">Message</label>
+                <textarea id="announcementMessage" rows="5"
+                          placeholder="Write your announcement..." required></textarea>
+
+                <label for="announcementAudience">Send To</label>
+                <select id="announcementAudience">
+                    <option value="all">All Students</option>
+                    <option value="course">Specific Course</option>
+                    <option value="year">Specific Year Level</option>
+                    <option value="student">Individual Student</option>
+                </select>
+
+                <label for="announcementTarget">Target (if applicable)</label>
+                <input type="text" id="announcementTarget"
+                       placeholder="Course, year, or Student ID">
+
+                <button type="submit" class="gold-button">
+                    Send Announcement
+                </button>
+
+            </form>
+
+            <div id="announcementList">
+                <p class="empty-state">No announcements yet.</p>
+            </div>
+
+        </section>
+
+
+        <!-- STUDENT CONCERNS -->
+        <section class="admin-page-section table-box hidden"
+                 id="studentConcerns">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Student Concerns</h2>
+                    <p>Read and respond to private student concerns.</p>
+                </div>
+            </div>
+
+            <div id="concernsList">
+                <p class="empty-state">No student concerns yet.</p>
+            </div>
+
+            <div class="concern-reply-box">
+
+                <h3>Reply to Student</h3>
+
+                <label for="concernStudentId">Student ID</label>
+                <input type="text" id="concernStudentId"
+                       placeholder="Student ID">
+
+                <label for="concernReply">Your Reply</label>
+                <textarea id="concernReply" rows="4"
+                          placeholder="Write your reply..."></textarea>
+
+                <button type="button"
+                        class="gold-button"
+                        id="sendConcernReply">
+                    Send Reply
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPORTS -->
+        <section class="admin-page-section table-box hidden"
+                 id="quickReports">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Quick Reports</h2>
+                    <p>
+                        Export registered student records into a CSV file
+                        that can be opened in Excel.
                     </p>
                 </div>
+            </div>
 
-            </section>
+            <div class="button-group">
+                <button type="button"
+                        id="downloadCsvBtn"
+                        class="gold-button">
+                    Download Student CSV Report
+                </button>
+            </div>
 
-        </main>
+            <p id="csvReportStatus"
+               class="count-text"
+               aria-live="polite">
+                Ready to export student records.
+            </p>
 
-    </div>
+        </section>
+
+    </main>
+
+</div>
 
 </section>
 
-<!-- ADMIN DASHBOARD JAVASCRIPT -->
+<!-- JAVASCRIPT -->
 <script src="../js/admin-dashboard.js" defer></script>
 <script src="../js/menu.js" defer></script>
-<script src="../js/feature.js" defer></script>
+
 
 </body>
 </html>

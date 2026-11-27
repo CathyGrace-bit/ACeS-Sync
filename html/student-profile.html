@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | ACeS Sync</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/student-dashboard.css">
+
+    <style>
+        .profile-page {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 25px;
+        }
+
+        .profile-heading {
+            margin-bottom: 25px;
+        }
+
+        .profile-heading h1 {
+            color: #071d43;
+            margin-bottom: 8px;
+        }
+
+        .profile-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(7, 29, 67, .09);
+            border-top: 5px solid #f5a623;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .profile-field {
+            background: #f4f6fa;
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .profile-field label {
+            display: block;
+            color: #758198;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .profile-field p {
+            color: #071d43;
+            font-weight: 600;
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-back {
+            display: inline-block;
+            margin-top: 25px;
+            background: #071d43;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        @media (max-width: 650px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-page {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="student-header">
+        <div class="student-header-left">
+            <a href="student-dashboard.html" class="student-brand">
+                ACeS Sync
+            </a>
+        </div>
+
+        <div>
+            <span>Academic Year 2026-2027</span>
+            <button type="button" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <main class="profile-page">
+
+        <div class="profile-heading">
+            <h1>My Profile</h1>
+            <p>View your registered student information.</p>
+        </div>
+
+        <section class="profile-card">
+            <div class="profile-grid">
+
+                <div class="profile-field">
+                    <label>Full Name</label>
+                    <p id="profileName">Loading...</p>
+                </div>
+
+                <div class="profile-field">
+                    <label>Student ID</label>
+                    <p id="profileID">Loading...</p>
+                </div>
+
+                <div class="profile-field">
+                    <label>Course</label>
+                    <p id="profileCourse">Loading...</p>
+                </div>
+
+                <div class="profile-field">
+                    <label>Year Level</label>
+                    <p id="profileYear">Loading...</p>
+                </div>
+
+                <div class="profile-field">
+                    <label>Section</label>
+                    <p id="profileSection">Loading...</p>
+                </div>
+
+            </div>
+
+            <a href="student-dashboard.html" class="profile-back">
+                Back to Dashboard
+            </a>
+        </section>
+
+    </main>
+
+    <script src="../js/student-profile.js" defer></script>
+
+</body>
+</html>

@@ -1,289 +1,475 @@
+
+/* =========================================
+   ACeS SYNC - ADMIN FEATURES
+   SEARCH + CALENDAR + NOTIFICATIONS
+========================================= */
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    const adminPage = document.getElementById("adminPage");
-    const statsGrid = adminPage
-        ? adminPage.querySelector(".stats-grid")
-        : null;
+    const DATA_KEY = "acesSyncData_v1";
 
-    if (!statsGrid) {
-        console.log("Dashboard stats section not found.");
-        return;
+    /* LOAD DATA */
+
+    function loadData() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(DATA_KEY));
+
+            return {
+                students: saved?.students || [],
+                payments: saved?.payments || [],
+                permits: saved?.permits || [],
+                calendarEvents: saved?.calendarEvents || [],
+                announcements: saved?.announcements || [],
+                concerns: saved?.concerns || []
+            };
+        } catch (error) {
+            console.error("Unable to load dashboard data:", error);
+
+            return {
+                students: [],
+                payments: [],
+                permits: [],
+                calendarEvents: [],
+                announcements: [],
+                concerns: []
+            };
+        }
     }
 
-    // GET STUDENT RECORDS FROM ORIGINAL SCRIPT.JS
-    function getStudents() {
-        return typeof students !== "undefined" && Array.isArray(students)
-            ? students
-            : [];
+    function saveData(data) {
+        localStorage.setItem(DATA_KEY, JSON.stringify(data));
     }
 
-    // FORMAT MONEY
-    function formatMoney(amount) {
-        return "₱" + Number(amount || 0).toLocaleString("en-PH", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    }
+    let data = loadData();
 
-    // CREATE EXTRA FEATURES
-    const extraFeatures = document.createElement("div");
-    extraFeatures.className = "aces-extra-features";
+    /* =====================================
+       GLOBAL SEARCH
+    ===================================== */
 
-    extraFeatures.innerHTML = `
+    const globalSearch = document.getElementById("globalSearch");
 
-        <!-- QUICK REPORTS -->
-        <div class="aces-feature-card" id="acesReports">
-            <h3>📊 Quick Reports</h3>
+    if (globalSearch) {
 
-            <div class="aces-report-grid">
+        globalSearch.addEventListener("input", function () {
 
-                <div class="aces-report-item">
-                    <span>Total Students</span>
-                    <strong id="acesReportStudents">0</strong>
-                </div>
+            const keyword = this.value.trim().toLowerCase();
 
-                <div class="aces-report-item">
-                    <span>Total Tuition</span>
-                    <strong id="acesReportTuition">₱0.00</strong>
-                </div>
+            if (!keyword) {
+                return;
+            }
 
-                <div class="aces-report-item">
-                    <span>Total Collected</span>
-                    <strong id="acesReportPaid">₱0.00</strong>
-                </div>
+            const studentPage = document.getElementById("studentRecords");
 
-            </div>
+            if (!studentPage) {
+                return;
+            }
 
-            <button class="aces-feature-button" id="acesExportReport">
-                Download CSV Report
-            </button>
-        </div>
-
-        <!-- EXAM PERMITS -->
-        <div class="aces-feature-card" id="acesPermits">
-            <h3>📄 Exam Permit Records</h3>
-
-            <div class="aces-feature-table-wrap">
-                <table class="aces-feature-table">
-                    <thead>
-                        <tr>
-                            <th>Student ID</th>
-                            <th>Student Name</th>
-                            <th>Permit Number</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="acesPermitTable">
-                        <tr>
-                            <td colspan="3">No permit records yet.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- QUICK ACTIONS -->
-        <div class="aces-feature-card">
-            <h3>⚡ Quick Actions</h3>
-
-            <p>Quick access to important admin sections.</p>
-
-            <a href="#studentRecords" class="aces-feature-button">
-                View Students
-            </a>
-
-            <a href="#paymentVerification" class="aces-feature-button">
-                Verify Payments
-            </a>
-
-            <a href="#acesPermits" class="aces-feature-button">
-                View Permits
-            </a>
-        </div>
-
-        <!-- HELP AND SETTINGS -->
-        <div class="aces-feature-card" id="acesHelp">
-            <h3>⚙️ Settings & Help</h3>
-
-            <p>
-                Welcome to ACeS Sync Admin Dashboard.
-                Use this section to review important reminders.
-            </p>
-
-            <div class="aces-help-box">
-                <strong>Payment Reminder</strong>
-                <p>
-                    Always check the student's payment reference
-                    before verifying a transaction.
-                </p>
-            </div>
-
-            <div class="aces-help-box">
-                <strong>Student Records Reminder</strong>
-                <p>
-                    Make sure student information and tuition
-                    amounts are correct before saving.
-                </p>
-            </div>
-        </div>
-
-    `;
-
-    statsGrid.insertAdjacentElement("afterend", extraFeatures);
-
-
-    // UPDATE REPORTS AND PERMITS
-    function updateExtraFeatures() {
-
-        const studentList = getStudents();
-
-        let totalTuition = 0;
-        let totalPaid = 0;
-
-        studentList.forEach(function (student) {
-
-            totalTuition += Number(
-                student.discountedTuition ?? student.tuition ?? 0
+            const studentLink = document.querySelector(
+                '.sidebar-nav a[data-page="studentRecords"]'
             );
 
-            totalPaid += Number(student.paid || 0);
+            if (studentLink) {
+                studentLink.click();
+            }
+
+            const studentSearch = document.getElementById("searchStudent");
+
+            if (studentSearch) {
+                studentSearch.value = this.value;
+                studentSearch.dispatchEvent(new Event("input", {
+                    bubbles: true
+                }));
+            }
 
         });
 
-        document.getElementById("acesReportStudents").textContent =
-            studentList.length;
+    }
 
-        document.getElementById("acesReportTuition").textContent =
-            formatMoney(totalTuition);
+    /* =====================================
+       CALENDAR ELEMENTS
+    ===================================== */
 
-        document.getElementById("acesReportPaid").textContent =
-            formatMoney(totalPaid);
+    const calendarButton = document.getElementById("calendarButton");
+    const calendarPanel = document.getElementById("calendarPanel");
+    const notificationButton = document.getElementById("notificationButton");
+    const notificationPanel = document.getElementById("notificationPanel");
 
+    const monthLabel = document.getElementById("calendarMonth");
+    const calendarGrid = document.getElementById("calendarGrid");
 
-        // UPDATE PERMIT TABLE
-        const permitTable = document.getElementById("acesPermitTable");
+    const previousMonth = document.getElementById("previousMonth");
+    const nextMonth = document.getElementById("nextMonth");
 
-        const permitStudents = studentList.filter(function (student) {
-            return student.permit;
+    const eventForm = document.getElementById("calendarEventForm");
+    const eventList = document.getElementById("calendarEvents");
+
+    let currentDate = new Date();
+
+    /* OPEN AND CLOSE PANELS */
+
+    function closePanels() {
+        calendarPanel?.classList.add("hidden");
+        notificationPanel?.classList.add("hidden");
+    }
+
+    calendarButton?.addEventListener("click", function (event) {
+        event.stopPropagation();
+
+        const willOpen = calendarPanel?.classList.contains("hidden");
+
+        closePanels();
+
+        if (willOpen) {
+            calendarPanel?.classList.remove("hidden");
+            renderCalendar();
+        }
+    });
+
+    notificationButton?.addEventListener("click", function (event) {
+        event.stopPropagation();
+
+        const willOpen = notificationPanel?.classList.contains("hidden");
+
+        closePanels();
+
+        if (willOpen) {
+            notificationPanel?.classList.remove("hidden");
+            renderNotifications();
+        }
+    });
+
+    calendarPanel?.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    notificationPanel?.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", closePanels);
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closePanels();
+        }
+    });
+
+    /* =====================================
+       MONTHLY CALENDAR
+    ===================================== */
+
+    function renderCalendar() {
+
+        if (!monthLabel || !calendarGrid) {
+            return;
+        }
+
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        monthLabel.textContent = currentDate.toLocaleDateString(
+            "en-PH",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+        calendarGrid.innerHTML = "";
+
+        const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+        dayNames.forEach(function (day) {
+
+            const dayElement = document.createElement("div");
+
+            dayElement.className = "calendar-day";
+            dayElement.textContent = day;
+
+            calendarGrid.appendChild(dayElement);
+
         });
 
-        permitTable.innerHTML = "";
+        for (let i = 0; i < firstDay; i++) {
 
-        if (permitStudents.length === 0) {
+            const empty = document.createElement("div");
 
-            permitTable.innerHTML = `
-                <tr>
-                    <td colspan="3">No permit records yet.</td>
-                </tr>
-            `;
+            calendarGrid.appendChild(empty);
+
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+
+            const dateElement = document.createElement("button");
+
+            dateElement.type = "button";
+            dateElement.className = "calendar-date";
+            dateElement.textContent = day;
+
+            const dateString =
+                year + "-" +
+                String(month + 1).padStart(2, "0") + "-" +
+                String(day).padStart(2, "0");
+
+            const today = new Date();
+
+            if (
+                today.getFullYear() === year &&
+                today.getMonth() === month &&
+                today.getDate() === day
+            ) {
+                dateElement.classList.add("today");
+            }
+
+            if (
+                data.calendarEvents.some(function (item) {
+                    return item.date === dateString;
+                })
+            ) {
+                dateElement.classList.add("has-event");
+            }
+
+            dateElement.addEventListener("click", function () {
+
+                const eventDate = document.getElementById("eventDate");
+
+                if (eventDate) {
+                    eventDate.value = dateString;
+                }
+
+            });
+
+            calendarGrid.appendChild(dateElement);
+
+        }
+
+        renderEvents();
+
+    }
+
+    previousMonth?.addEventListener("click", function () {
+
+        currentDate.setMonth(currentDate.getMonth() - 1);
+
+        renderCalendar();
+
+    });
+
+    nextMonth?.addEventListener("click", function () {
+
+        currentDate.setMonth(currentDate.getMonth() + 1);
+
+        renderCalendar();
+
+    });
+
+    /* =====================================
+       ADD CALENDAR EVENT
+    ===================================== */
+
+    eventForm?.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        const title = document.getElementById("eventTitle")?.value.trim();
+        const date = document.getElementById("eventDate")?.value;
+        const time = document.getElementById("eventTime")?.value;
+        const description = document.getElementById("eventDescription")?.value.trim();
+
+        if (!title || !date) {
+            alert("Please enter an event title and date.");
+            return;
+        }
+
+        const newEvent = {
+            id: "EVT-" + Date.now(),
+            title: title,
+            date: date,
+            time: time || "",
+            description: description || "",
+            createdAt: new Date().toISOString()
+        };
+
+        data.calendarEvents.push(newEvent);
+
+        saveData(data);
+
+        eventForm.reset();
+
+        renderCalendar();
+
+        alert("Calendar event added successfully!");
+
+    });
+
+    /* DISPLAY EVENTS */
+
+    function renderEvents() {
+
+        if (!eventList) {
+            return;
+        }
+
+        eventList.innerHTML = "";
+
+        const events = [...data.calendarEvents].sort(function (a, b) {
+            return a.date.localeCompare(b.date);
+        });
+
+        if (events.length === 0) {
+
+            eventList.innerHTML =
+                '<p class="empty-state">No calendar events yet.</p>';
 
             return;
         }
 
-        permitStudents.forEach(function (student) {
+        events.forEach(function (item) {
 
-            const row = document.createElement("tr");
+            const card = document.createElement("div");
 
-            const idCell = document.createElement("td");
-            idCell.textContent = student.id || "";
+            card.className = "notification-item";
 
-            const nameCell = document.createElement("td");
-            nameCell.textContent = student.name || "";
+            const heading = document.createElement("strong");
+            heading.textContent = item.title;
 
-            const permitCell = document.createElement("td");
-            permitCell.textContent =
-                typeof student.permit === "string"
-                    ? student.permit
-                    : "Generated";
+            const date = document.createElement("p");
+            date.textContent = item.date + (item.time ? " • " + item.time : "");
 
-            row.appendChild(idCell);
-            row.appendChild(nameCell);
-            row.appendChild(permitCell);
+            const description = document.createElement("p");
+            description.textContent = item.description || "No description.";
 
-            permitTable.appendChild(row);
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "white-button";
+            deleteButton.textContent = "Delete Event";
+
+            deleteButton.addEventListener("click", function () {
+
+                if (!confirm("Delete this calendar event?")) {
+                    return;
+                }
+
+                data.calendarEvents = data.calendarEvents.filter(function (event) {
+                    return event.id !== item.id;
+                });
+
+                saveData(data);
+
+                renderCalendar();
+
+            });
+
+            card.append(heading, date, description, deleteButton);
+
+            eventList.appendChild(card);
 
         });
 
     }
 
+    /* =====================================
+       NOTIFICATIONS
+    ===================================== */
 
-    // EXPORT REPORT TO CSV
-    document.getElementById("acesExportReport")
-        .addEventListener("click", function () {
+    function renderNotifications() {
 
-            const studentList = getStudents();
+        if (!notificationPanel) {
+            return;
+        }
 
-            if (studentList.length === 0) {
-                alert("No student records available to export.");
-                return;
-            }
+        const container = document.getElementById("notificationList");
 
-            const rows = [
-                [
-                    "Student ID",
-                    "Student Name",
-                    "Course",
-                    "Grade / Year",
-                    "Section",
-                    "Tuition",
-                    "Paid",
-                    "Balance",
-                    "Permit"
-                ]
-            ];
+        if (!container) {
+            return;
+        }
 
-            studentList.forEach(function (student) {
+        container.innerHTML = "";
 
-                rows.push([
-                    student.id || "",
-                    student.name || "",
-                    student.course || "",
-                    student.grade || "",
-                    student.section || "",
-                    student.discountedTuition ?? student.tuition ?? 0,
-                    student.paid || 0,
-                    student.balance || 0,
-                    student.permit || ""
-                ]);
+        const pendingPayments = data.payments.filter(function (payment) {
+            return String(payment.status).toLowerCase() === "pending";
+        });
 
+        const notifications = [];
+
+        if (pendingPayments.length > 0) {
+
+            notifications.push({
+                title: "Pending Payments",
+                message: pendingPayments.length +
+                    " payment(s) need verification."
             });
 
-            const csvContent = rows.map(function (row) {
+        }
 
-                return row.map(function (value) {
+        if (data.concerns.length > 0) {
 
-                    return '"' +
-                        String(value).replace(/"/g, '""') +
-                        '"';
+            notifications.push({
+                title: "Student Concerns",
+                message: data.concerns.length +
+                    " student concern(s) recorded."
+            });
 
-                }).join(",");
+        }
 
-            }).join("\n");
+        if (data.announcements.length > 0) {
 
-            const file = new Blob(
-                [csvContent],
-                { type: "text/csv;charset=utf-8;" }
-            );
+            notifications.push({
+                title: "Announcements",
+                message: data.announcements.length +
+                    " announcement(s) available."
+            });
 
-            const url = URL.createObjectURL(file);
+        }
 
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = "ACeS-Sync-Student-Report.csv";
+        if (notifications.length === 0) {
 
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            container.innerHTML =
+                '<p class="empty-state">You have no new notifications.</p>';
 
-            URL.revokeObjectURL(url);
+            updateNotificationCount(0);
+
+            return;
+        }
+
+        notifications.forEach(function (item) {
+
+            const card = document.createElement("div");
+
+            card.className = "notification-item";
+
+            const heading = document.createElement("strong");
+            heading.textContent = item.title;
+
+            const message = document.createElement("p");
+            message.textContent = item.message;
+
+            card.append(heading, message);
+
+            container.appendChild(card);
 
         });
 
+        updateNotificationCount(notifications.length);
 
-    // INITIAL UPDATE
-    updateExtraFeatures();
+    }
 
-    // REFRESH WHEN STUDENT DATA CHANGES
-    setInterval(updateExtraFeatures, 1200);
+    function updateNotificationCount(count) {
+
+        const badge = document.getElementById("notificationCount");
+
+        if (!badge) {
+            return;
+        }
+
+        badge.textContent = count;
+        badge.classList.toggle("hidden", count === 0);
+
+    }
+
+    renderNotifications();
 
 });

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notifications | ACeS Sync</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/student-dashboard.css">
+
+    <style>
+        .notification-page {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 25px;
+        }
+
+        .notification-heading {
+            margin-bottom: 25px;
+        }
+
+        .notification-heading h1 {
+            color: #071d43;
+        }
+
+        .notification-card {
+            background: white;
+            padding: 22px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border-left: 5px solid #f5a623;
+            box-shadow: 0 5px 18px rgba(7, 29, 67, .07);
+        }
+
+        .notification-card h3 {
+            color: #071d43;
+            margin: 0 0 8px;
+        }
+
+        .notification-card p {
+            color: #758198;
+            margin: 0 0 10px;
+        }
+
+        .notification-date {
+            font-size: 12px;
+            color: #758198;
+        }
+
+        .notification-empty {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            text-align: center;
+            color: #758198;
+        }
+
+        .notification-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #071d43;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="student-header">
+        <div class="student-header-left">
+            <a href="student-dashboard.html" class="student-brand">
+                ACeS Sync
+            </a>
+        </div>
+
+        <div>
+            <span>Academic Year 2026-2027</span>
+            <button type="button" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <main class="notification-page">
+
+        <div class="notification-heading">
+            <h1>Notifications</h1>
+            <p>Stay updated with announcements and important student updates.</p>
+        </div>
+
+        <section id="studentNotifications">
+            <div class="notification-empty">
+                Loading notifications...
+            </div>
+        </section>
+
+        <a href="student-dashboard.html" class="notification-back">
+            Back to Dashboard
+        </a>
+
+    </main>
+
+    <script src="../js/student-notifications.js" defer></script>
+
+</body>
+</html>

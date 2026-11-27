@@ -1,6 +1,8 @@
 
 /* =========================================
    ACeS SYNC - REPORTS JAVASCRIPT
+   Compatible with Admin Dashboard
+   DATA PRESERVATION VERSION
 ========================================= */
 
 const DATA_KEY = "acesSyncData_v1";
@@ -10,20 +12,26 @@ let systemData = {
     students: [],
     payments: [],
     permits: [],
-    messages: []
+    calendarEvents: [],
+    announcements: [],
+    concerns: []
 };
 
-/* HELPERS */
+// =========================================
+// HELPERS
+// =========================================
 
 function money(amount) {
-    return "₱" + Number(amount || 0).toLocaleString("en-PH", {
+    return Number(amount || 0).toLocaleString("en-PH", {
+        style: "currency",
+        currency: "PHP",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
 }
 
 function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, function (character) {
+    return String(value ?? "").replace(/[&<>"']/g, character => {
         const entities = {
             "&": "&amp;",
             "<": "&lt;",
@@ -37,46 +45,79 @@ function escapeHTML(value) {
 }
 
 function getStudentId(student) {
-    return String(student.id || student.studentID || "");
+    return String(student.id ?? student.studentID ?? "");
 }
 
 function getStudentName(student) {
-    return student.name || student.studentName || "Unnamed Student";
+    return student.name ?? student.studentName ?? "Unnamed Student";
 }
 
-function getTuition(student) {
-    return Number(
-        student.discountedTuition ??
-        student.tuition ??
-        student.tuitionFee ??
-        0
+function getOriginalTuition(student) {
+    return Number(student.tuition ?? student.tuitionFee ?? 0);
+}
+
+function getDiscountPercent(student) {
+    return Number(student.discountPercent ?? 0);
+}
+
+function getDiscountedTuition(student) {
+    if (student.discountedTuition !== undefined) {
+        return Number(student.discountedTuition) || 0;
+    }
+
+    const tuition = getOriginalTuition(student);
+    const discount = getDiscountPercent(student);
+
+    return Math.max(0, tuition - (tuition * discount / 100));
+}
+
+function getDiscountAmount(student) {
+    return Math.max(
+        0,
+        getOriginalTuition(student) - getDiscountedTuition(student)
     );
 }
 
 function getApprovedPayments(studentId) {
-    return systemData.payments.filter(function (payment) {
+    return systemData.payments.filter(payment => {
         const paymentStudentId = String(
-            payment.studentId || payment.studentID || ""
+            payment.studentId ?? payment.studentID ?? ""
         );
 
-        return paymentStudentId === String(studentId) &&
-            String(payment.status || "").toLowerCase() === "approved";
+        return (
+            paymentStudentId === String(studentId) &&
+            String(payment.status || "").toLowerCase() === "approved"
+        );
     });
 }
 
-function getPaid(studentId) {
-    return getApprovedPayments(studentId).reduce(function (total, payment) {
-        return total + Number(payment.amount || 0);
-    }, 0);
+function getPaid(student) {
+    // Use the same student.paid value as the Admin Dashboard.
+    if (student.paid !== undefined && student.paid !== null) {
+        return Number(student.paid) || 0;
+    }
+
+    // Fallback for older records without a saved paid field.
+    return getApprovedPayments(getStudentId(student)).reduce(
+        (total, payment) => total + (Number(payment.amount) || 0),
+        0
+    );
 }
 
 function getBalance(student) {
-    return Math.max(0, getTuition(student) - getPaid(getStudentId(student)));
+    if (student.balance !== undefined && student.balance !== null) {
+        return Math.max(0, Number(student.balance) || 0);
+    }
+
+    return Math.max(
+        0,
+        getDiscountedTuition(student) - getPaid(student)
+    );
 }
 
 function getPaymentStatus(student) {
-    const tuition = getTuition(student);
-    const paid = getPaid(getStudentId(student));
+    const tuition = getDiscountedTuition(student);
+    const paid = getPaid(student);
 
     if (tuition <= 0 || paid <= 0) {
         return "Unpaid";
@@ -89,73 +130,90 @@ function getPaymentStatus(student) {
     return "Partially Paid";
 }
 
-/* LOAD AND SAVE DATA */
+function getStatusClass(status) {
+    if (status === "Fully Paid") return "paid";
+    if (status === "Partially Paid") return "partial";
+    return "unpaid";
+}
+
+// =========================================
+// LOAD DATA
+// =========================================
 
 function loadSystemData() {
     try {
-        const savedData = JSON.parse(localStorage.getItem(DATA_KEY));
+        const saved = JSON.parse(localStorage.getItem(DATA_KEY));
 
-        if (Array.isArray(savedData)) {
-            systemData.students = savedData;
-        } else if (savedData && typeof savedData === "object") {
-            systemData.students = Array.isArray(savedData.students)
-                ? savedData.students : [];
+        if (Array.isArray(saved)) {
+            systemData.students = saved;
+            return;
+        }
 
-            systemData.payments = Array.isArray(savedData.payments)
-                ? savedData.payments : [];
-
-            systemData.permits = Array.isArray(savedData.permits)
-                ? savedData.permits : [];
-
-            systemData.messages = Array.isArray(savedData.messages)
-                ? savedData.messages : [];
+        if (saved && typeof saved === "object") {
+            systemData = {
+                ...systemData,
+                ...saved,
+                students: Array.isArray(saved.students) ? saved.students : [],
+                payments: Array.isArray(saved.payments) ? saved.payments : [],
+                permits: Array.isArray(saved.permits) ? saved.permits : [],
+                calendarEvents: Array.isArray(saved.calendarEvents)
+                    ? saved.calendarEvents : [],
+                announcements: Array.isArray(saved.announcements)
+                    ? saved.announcements : [],
+                concerns: Array.isArray(saved.concerns)
+                    ? saved.concerns : []
+            };
         }
     } catch (error) {
         console.error("Unable to load system data:", error);
+        alert("Unable to read saved records. Please check your browser storage.");
     }
 }
 
-function saveSystemData() {
-    localStorage.setItem(DATA_KEY, JSON.stringify(systemData));
-}
-
-/* ADMIN SESSION */
+// =========================================
+// ADMIN SESSION
+// =========================================
 
 function checkAdminSession() {
-    let session = null;
-
     try {
-        session = JSON.parse(localStorage.getItem(SESSION_KEY));
-    } catch (error) {
-        session = null;
-    }
+        const session = JSON.parse(localStorage.getItem(SESSION_KEY));
 
-    if (!session || session.role !== "admin") {
+        if (!session || session.role !== "admin") {
+            window.location.href = "../index.html";
+            return false;
+        }
+
+        return true;
+    } catch (error) {
         window.location.href = "../index.html";
         return false;
     }
-
-    return true;
 }
 
-/* REPORT TOTALS */
+// =========================================
+// REPORT STATISTICS
+// =========================================
 
 function renderReportStatistics() {
     const students = systemData.students;
 
     const totalStudents = students.length;
 
-    const totalTuition = students.reduce(function (total, student) {
-        return total + getTuition(student);
-    }, 0);
+    // Total tuition after discounts, matching payable tuition.
+    const totalTuition = students.reduce(
+        (total, student) => total + getDiscountedTuition(student),
+        0
+    );
 
-    const totalCollected = students.reduce(function (total, student) {
-        return total + getPaid(getStudentId(student));
-    }, 0);
+    const totalCollected = students.reduce(
+        (total, student) => total + getPaid(student),
+        0
+    );
 
-    const totalBalance = students.reduce(function (total, student) {
-        return total + getBalance(student);
-    }, 0);
+    const totalBalance = students.reduce(
+        (total, student) => total + getBalance(student),
+        0
+    );
 
     document.getElementById("reportTotalStudents").textContent =
         totalStudents;
@@ -170,14 +228,16 @@ function renderReportStatistics() {
         money(totalBalance);
 }
 
-/* PAYMENT STATUS SUMMARY */
+// =========================================
+// PAYMENT STATUS SUMMARY
+// =========================================
 
 function renderPaymentStatusSummary() {
     let fullyPaid = 0;
     let partiallyPaid = 0;
     let unpaid = 0;
 
-    systemData.students.forEach(function (student) {
+    systemData.students.forEach(student => {
         const status = getPaymentStatus(student);
 
         if (status === "Fully Paid") {
@@ -192,11 +252,12 @@ function renderPaymentStatusSummary() {
     document.getElementById("reportFullyPaid").textContent = fullyPaid;
     document.getElementById("reportPartiallyPaid").textContent =
         partiallyPaid;
-
     document.getElementById("reportUnpaid").textContent = unpaid;
 }
 
-/* STUDENT REPORT TABLE */
+// =========================================
+// STUDENT FINANCIAL TABLE
+// =========================================
 
 function renderReportTable() {
     const table = document.getElementById("reportTable");
@@ -211,11 +272,12 @@ function renderReportTable() {
 
     const selectedStatus = statusFilter
         ? statusFilter.value
-        : "all";
+        : "";
 
-    const filteredStudents = systemData.students.filter(function (student) {
+    const filteredStudents = systemData.students.filter(student => {
         const studentId = getStudentId(student).toLowerCase();
-        const studentName = getStudentName(student).toLowerCase();
+        const studentName = String(getStudentName(student)).toLowerCase();
+
         const status = getPaymentStatus(student);
 
         const matchesSearch =
@@ -223,46 +285,60 @@ function renderReportTable() {
             studentName.includes(search);
 
         const matchesStatus =
-            selectedStatus === "all" ||
-            status.toLowerCase() === selectedStatus.toLowerCase();
+            selectedStatus === "" ||
+            (selectedStatus === "Paid" && status === "Fully Paid") ||
+            (selectedStatus === "Partial" && status === "Partially Paid") ||
+            (selectedStatus === "Unpaid" && status === "Unpaid");
 
         return matchesSearch && matchesStatus;
     });
 
     if (filteredStudents.length === 0) {
-        table.innerHTML =
-            '<tr><td colspan="7" class="empty-message">' +
-            'No student records found.' +
-            '</td></tr>';
+        table.innerHTML = `
+            <tr>
+                <td colspan="10" class="empty-state">
+                    No student financial records found.
+                </td>
+            </tr>
+        `;
     } else {
-        table.innerHTML = filteredStudents.map(function (student) {
-            const studentId = getStudentId(student);
-            const tuition = getTuition(student);
-            const paid = getPaid(studentId);
+        table.innerHTML = filteredStudents.map(student => {
+            const tuition = getOriginalTuition(student);
+            const discountPercent = getDiscountPercent(student);
+            const discountAmount = getDiscountAmount(student);
+            const discountedTuition = getDiscountedTuition(student);
+            const paid = getPaid(student);
             const balance = getBalance(student);
             const status = getPaymentStatus(student);
 
-            let statusClass = "unpaid";
-
-            if (status === "Fully Paid") {
-                statusClass = "paid";
-            } else if (status === "Partially Paid") {
-                statusClass = "partial";
-            }
-
             return `
                 <tr>
-                    <td>${escapeHTML(studentId)}</td>
+                    <td>${escapeHTML(getStudentId(student))}</td>
+
                     <td>${escapeHTML(getStudentName(student))}</td>
+
+                    <td>${escapeHTML(student.course || "-")}</td>
+
+                    <td>${escapeHTML(student.grade || "-")}</td>
+
                     <td>${money(tuition)}</td>
-                    <td>${money(paid)}</td>
-                    <td>${money(balance)}</td>
+
                     <td>
-                        <span class="status-badge ${statusClass}">
+                        ${discountPercent}%
+                        <small>(${money(discountAmount)})</small>
+                    </td>
+
+                    <td>${money(discountedTuition)}</td>
+
+                    <td>${money(paid)}</td>
+
+                    <td>${money(balance)}</td>
+
+                    <td>
+                        <span class="status-badge ${getStatusClass(status)}">
                             ${status}
                         </span>
                     </td>
-                    <td>${escapeHTML(student.course || "-")}</td>
                 </tr>
             `;
         }).join("");
@@ -272,12 +348,13 @@ function renderReportTable() {
 
     if (countText) {
         countText.textContent =
-            "Showing " + filteredStudents.length +
-            " of " + systemData.students.length + " students";
+            `Showing ${filteredStudents.length} of ${systemData.students.length} students`;
     }
 }
 
-/* REFRESH REPORTS */
+// =========================================
+// REFRESH REPORTS
+// =========================================
 
 function refreshReportsPage() {
     renderReportStatistics();
@@ -285,14 +362,20 @@ function refreshReportsPage() {
     renderReportTable();
 }
 
-/* LOGOUT */
+// =========================================
+// LOGOUT
+// =========================================
 
 function logout() {
+    if (!confirm("Are you sure you want to log out?")) return;
+
     localStorage.removeItem(SESSION_KEY);
     window.location.href = "../index.html";
 }
 
-/* INITIALIZE */
+// =========================================
+// INITIALIZE
+// =========================================
 
 document.addEventListener("DOMContentLoaded", function () {
     if (!checkAdminSession()) return;
@@ -300,14 +383,9 @@ document.addEventListener("DOMContentLoaded", function () {
     loadSystemData();
     refreshReportsPage();
 
-    const searchInput = document.getElementById("reportSearch");
-    const statusFilter = document.getElementById("reportStatusFilter");
+    document.getElementById("reportSearch")
+        ?.addEventListener("input", renderReportTable);
 
-    if (searchInput) {
-        searchInput.addEventListener("input", renderReportTable);
-    }
-
-    if (statusFilter) {
-        statusFilter.addEventListener("change", renderReportTable);
-    }
+    document.getElementById("reportStatusFilter")
+        ?.addEventListener("change", renderReportTable);
 });

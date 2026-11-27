@@ -208,7 +208,7 @@ function checkExistingSession() {
         if (!session) return;
 
         if (session.role === "admin") {
-            window.location.replace("admindashboard.html");
+            window.location.replace("admin-dashboard.html");
             return;
         }
 

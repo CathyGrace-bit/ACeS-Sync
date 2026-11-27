@@ -1,10 +1,19 @@
-const SUPABASE_URL =
-    "https://hzpocgvhepqqffjcegjf.supabase.co";
+
+/* =========================================
+   ACeS SYNC - SUPABASE CONNECTION
+   ACLC MANDAUE
+========================================= */
+
+"use strict";
+
+const SUPABASE_URL = "https://brpwufimscyjazehhswc.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-    "YOUR_PUBLISHABLE_KEY_HERE";
+    "sb_publishable_SzXU4B4JJG_PUXJ16i8efA_73qmaey4";
 
-const supabase = window.supabase.createClient(
+const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
 );
+
+console.log("ACeS Sync: Supabase client initialized successfully!");

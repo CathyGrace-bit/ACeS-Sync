@@ -7,9 +7,13 @@
 
     <title>ACeS Sync | Student Dashboard</title>
 
-    <!-- STUDENT DASHBOARD CSS -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/student-dashboard.css">
+    ```html
+<a href="student-notifications.html" class="student-nav-link">
+    Notifications
+</a>
+```
 </head>
 
 <body>
@@ -19,9 +23,22 @@
     <!-- STUDENT HEADER -->
     <header class="student-header">
 
-        <div class="student-brand">
-            <strong>ACeS Sync</strong>
-            <span>Student Dashboard</span>
+        <div class="student-header-left">
+
+            <button type="button"
+                    id="studentMenuToggle"
+                    class="student-menu-toggle"
+                    aria-label="Open navigation menu"
+                    aria-controls="studentSidebar"
+                    aria-expanded="false">
+                ☰
+            </button>
+
+            <div class="student-brand">
+                <strong>ACeS Sync</strong>
+                <span>Student Dashboard</span>
+            </div>
+
         </div>
 
         <div class="student-header-actions">
@@ -36,13 +53,76 @@
 
     </header>
 
+    <!-- SIDEBAR OVERLAY -->
+    <div id="studentMenuOverlay"
+         class="student-menu-overlay"></div>
+
+    <!-- STUDENT SIDEBAR -->
+    <aside id="studentSidebar" class="student-sidebar">
+
+        <div class="student-sidebar-brand">
+            <strong>ACeS Sync</strong>
+            <span>Student Portal</span>
+        </div>
+
+        <nav class="student-sidebar-nav">
+
+            <a href="student-dashboard.html"
+               class="student-nav-link active">
+                <span>⌂</span>
+                Dashboard
+            </a>
+
+            <a href="student-profile.html"
+               class="student-nav-link">
+                <span>♙</span>
+                My Profile
+            </a>
+
+            <a href="student-payments.html"
+               class="student-nav-link">
+                <span>₱</span>
+                Tuition & Payments
+            </a>
+
+            <a href="student-permits.html"
+               class="student-nav-link">
+                <span>▤</span>
+                Exam Permit
+            </a>
+
+            <a href="student-announcements.html"
+               class="student-nav-link">
+                <span>▣</span>
+                Announcements
+            </a>
+
+            <a href="student-concerns.html"
+               class="student-nav-link">
+                <span>✉</span>
+                My Concerns
+            </a>
+
+        </nav>
+
+        <div class="student-sidebar-footer">
+            <button type="button"
+                    class="student-sidebar-logout"
+                    onclick="logout()">
+                ⇥ Logout
+            </button>
+        </div>
+
+    </aside>
+
     <!-- STUDENT MAIN CONTENT -->
-    <main class="student-page-content">
+    <main id="studentDashboard" class="student-page-content">
 
         <div class="student-grid">
 
             <!-- STUDENT INFORMATION -->
-            <article class="student-card student-profile">
+            <article id="studentInfo"
+                     class="student-card student-profile">
 
                 <div class="card-title">
                     <span class="card-icon">♙</span>
@@ -77,7 +157,7 @@
             </article>
 
             <!-- TUITION SUMMARY -->
-            <article class="student-card">
+            <article id="tuitionSummary" class="student-card">
 
                 <div class="card-title">
                     <span class="card-icon">▣</span>
@@ -116,7 +196,7 @@
             </article>
 
             <!-- PAYMENT STATUS -->
-            <article class="student-card">
+            <article id="paymentStatusCard" class="student-card">
 
                 <div class="card-title">
                     <span class="card-icon success-icon">✓</span>
@@ -140,7 +220,8 @@
             </article>
 
             <!-- EXAM PERMIT -->
-            <article class="student-card permit-card">
+            <article id="examPermit"
+                     class="student-card permit-card">
 
                 <div class="card-title">
                     <span class="card-icon">▤</span>
@@ -178,7 +259,8 @@
         <div class="student-bottom-grid">
 
             <!-- SUBMIT PAYMENT -->
-            <section class="student-card submit-payment-card">
+            <section id="submitPaymentSection"
+                     class="student-card submit-payment-card">
 
                 <div class="card-title">
 
@@ -249,7 +331,8 @@
             </section>
 
             <!-- PAYMENT HISTORY -->
-            <section class="student-card history-card">
+            <section id="paymentHistorySection"
+                     class="student-card history-card">
 
                 <div class="card-title">
                     <span class="card-icon">◷</span>
@@ -270,7 +353,6 @@
 
 </section>
 
-<!-- STUDENT DASHBOARD JAVASCRIPT -->
 <script src="../js/student-dashboard.js" defer></script>
 
 </body>

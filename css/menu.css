@@ -1,96 +1,849 @@
-/* HAMBURGER MENU BUTTON */
-.menu-toggle {
-    background: #0a1931;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 15px;
-    font-size: 24px;
-    cursor: pointer;
-    margin-right: 15px;
+
+/* =========================================
+   ACeS SYNC - ADMIN CONTROL CENTER
+   NAVY BLUE + GOLD + WHITE
+========================================= */
+
+:root {
+    --menu-navy: #071d43;
+    --menu-navy-light: #102f66;
+    --menu-gold: #f5a623;
+    --menu-white: #ffffff;
+    --menu-bg: #f4f6fa;
+    --menu-text: #17243b;
+    --menu-muted: #758198;
+    --menu-border: #dce3ee;
+    --menu-danger: #d94b4b;
 }
 
-/* MENU OVERLAY */
-.menu-overlay {
+/* =========================================
+   HAMBURGER BUTTON
+========================================= */
+
+.menu-toggle {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    background: var(--menu-navy);
+    color: white;
+    font-size: 23px;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.menu-toggle:hover {
+    background: var(--menu-navy-light);
+    transform: translateY(-1px);
+}
+
+.menu-toggle:focus-visible,
+.admin-tools-panel button:focus-visible,
+.admin-tools-dialog button:focus-visible {
+    outline: 3px solid var(--menu-gold);
+    outline-offset: 3px;
+}
+
+/* =========================================
+   ADMIN MENU OVERLAY
+========================================= */
+
+.admin-tools-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    display: none;
+    z-index: 1998;
+    background: rgba(7, 29, 67, .48);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
 }
 
-.menu-overlay.active {
+.admin-tools-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* =========================================
+   SLIDING ADMIN PANEL
+========================================= */
+
+.admin-tools-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1999;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 355px;
+    max-width: 90vw;
+    height: 100vh;
+    height: 100dvh;
+
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    background: var(--menu-white);
+    color: var(--menu-text);
+
+    box-shadow: 12px 0 40px rgba(7, 29, 67, .18);
+
+    transform: translateX(-105%);
+    visibility: hidden;
+
+    transition:
+        transform .28s ease,
+        visibility .28s ease;
+}
+
+.admin-tools-panel.active {
+    transform: translateX(0);
+    visibility: visible;
+}
+
+/* =========================================
+   PANEL HEADER
+========================================= */
+
+.admin-tools-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 23px 23px 19px;
+
+    background: var(--menu-navy);
+    color: white;
+}
+
+.admin-tools-label {
+    display: block;
+    margin-bottom: 5px;
+
+    color: var(--menu-gold);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.admin-tools-header h2 {
+    margin: 0;
+    color: white;
+    font-size: 21px;
+    line-height: 1.3;
+}
+
+.admin-tools-header > div > small {
+    display: block;
+    margin-top: 5px;
+    color: #c5d0e2;
+    font-size: 12px;
+}
+
+.admin-tools-close {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 9px;
+
+    background: rgba(255,255,255,.1);
+    color: white;
+
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.admin-tools-close:hover {
+    background: rgba(255,255,255,.2);
+}
+
+/* =========================================
+   PROFILE SUMMARY
+========================================= */
+
+.admin-tools-profile {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    margin: 17px 18px 5px;
+    padding: 16px;
+
+    border: 1px solid var(--menu-border);
+    border-radius: 12px;
+
+    background: #f8f9fc;
+}
+
+.admin-tools-avatar {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid var(--menu-gold);
+    border-radius: 50%;
+
+    background: var(--menu-navy);
+    color: var(--menu-gold);
+
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.admin-tools-profile strong,
+.admin-tools-profile small {
     display: block;
 }
 
-/* SIDE MENU */
-.side-menu {
+.admin-tools-profile strong {
+    color: var(--menu-navy);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.admin-tools-profile small {
+    margin-top: 5px;
+    color: var(--menu-muted);
+    font-size: 12px;
+}
+
+/* =========================================
+   MENU GROUPS
+========================================= */
+
+.admin-tools-section {
+    padding: 17px 18px 12px;
+    border-bottom: 1px solid #e9edf3;
+}
+
+.admin-tools-heading {
+    margin: 0 0 9px;
+    padding-left: 4px;
+
+    color: var(--menu-muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.admin-tools-section button {
+    width: 100%;
+    min-height: 57px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin: 3px 0;
+    padding: 10px 11px;
+
+    border: 1px solid transparent;
+    border-radius: 9px;
+
+    background: transparent;
+    color: var(--menu-text);
+
+    text-align: left;
+    cursor: pointer;
+
+    transition: background .2s ease, border-color .2s ease;
+}
+
+.admin-tools-section button:hover {
+    border-color: #e5eaf2;
+    background: #f3f6fb;
+}
+
+.admin-tools-section button > span:first-child {
+    width: 27px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 19px;
+}
+
+.admin-menu-copy {
+    min-width: 0;
+    flex: 1;
+}
+
+.admin-menu-copy strong,
+.admin-menu-copy small {
+    display: block;
+}
+
+.admin-menu-copy strong {
+    color: var(--menu-navy);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-menu-copy small {
+    margin-top: 4px;
+    color: var(--menu-muted);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.admin-tools-section button > .admin-theme-label {
+    margin-left: auto;
+    color: var(--menu-navy-light);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+.admin-tools-footer {
+    margin-top: auto;
+    padding: 18px;
+    background: #fafbfc;
+}
+
+.admin-tools-logout {
+    width: 100%;
+    min-height: 45px;
+
+    border: 1px solid #f1cccc;
+    border-radius: 9px;
+
+    background: #fff5f5;
+    color: var(--menu-danger);
+
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+
+    transition: background .2s ease;
+}
+
+.admin-tools-logout:hover {
+    background: #ffe8e8;
+}
+
+/* =========================================
+   DIALOG OVERLAY
+========================================= */
+
+.admin-tools-dialog-overlay {
     position: fixed;
-    top: 0;
-    left: -280px;
-    width: 260px;
-    height: 100%;
-    background: #0a1931;
-    color: white;
-    z-index: 1000;
-    padding: 25px 20px;
+    inset: 0;
+    z-index: 2001;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 18px;
     box-sizing: border-box;
-    transition: left 0.3s ease;
+
+    background: rgba(7, 29, 67, .58);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity .2s ease, visibility .2s ease;
+}
+
+.admin-tools-dialog-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* =========================================
+   DIALOG WINDOW
+========================================= */
+
+.admin-tools-dialog {
+    position: relative;
+
+    width: 100%;
+    max-width: 490px;
+    max-height: 88vh;
+    max-height: 88dvh;
+
+    overflow-y: auto;
+    padding: 27px;
+
+    box-sizing: border-box;
+
+    border: 1px solid var(--menu-border);
+    border-radius: 15px;
+
+    background: white;
+    color: var(--menu-text);
+
+    box-shadow: 0 20px 60px rgba(0,0,0,.22);
+
+    transform: translateY(10px);
+    transition: transform .2s ease;
+}
+
+.admin-tools-dialog-overlay.active .admin-tools-dialog {
+    transform: translateY(0);
+}
+
+.admin-tools-dialog h2 {
+    margin: 0 38px 19px 0;
+    color: var(--menu-navy);
+    font-size: 21px;
+}
+
+.admin-dialog-close {
+    position: absolute;
+    top: 17px;
+    right: 18px;
+
+    width: 34px;
+    height: 34px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #f0f3f8;
+    color: var(--menu-navy);
+
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.admin-dialog-close:hover {
+    background: #e4eaf3;
+}
+
+/* =========================================
+   DIALOG TEXT AND INFORMATION
+========================================= */
+
+.admin-dialog-note {
+    margin: 0 0 18px;
+    color: var(--menu-muted);
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.admin-profile-details p {
+    margin: 0;
+    padding: 13px 0;
+    border-bottom: 1px solid #e8edf3;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.admin-profile-details p strong {
+    color: var(--menu-navy);
+}
+
+/* =========================================
+   INPUTS AND SELECTS
+========================================= */
+
+.admin-tools-dialog label:not(.admin-switch) {
+    display: block;
+    margin: 12px 0 7px;
+    color: var(--menu-text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-tools-dialog input:not([type="checkbox"]),
+.admin-tools-dialog select {
+    width: 100%;
+    min-height: 43px;
+
+    margin: 0 0 14px;
+    padding: 10px 12px;
+
+    box-sizing: border-box;
+
+    border: 1px solid var(--menu-border);
+    border-radius: 8px;
+
+    background: white;
+    color: var(--menu-text);
+
+    font: inherit;
+    font-size: 13px;
+}
+
+.admin-tools-dialog input:focus,
+.admin-tools-dialog select:focus {
+    outline: none;
+    border-color: var(--menu-navy-light);
+    box-shadow: 0 0 0 3px rgba(16,47,102,.1);
+}
+
+/* =========================================
+   SAVE BUTTON
+========================================= */
+
+.admin-dialog-save {
+    width: 100%;
+    min-height: 44px;
+
+    margin-top: 12px;
+    padding: 11px 15px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: var(--menu-navy);
+    color: white;
+
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+
+    transition: background .2s ease;
+}
+
+.admin-dialog-save:hover {
+    background: var(--menu-navy-light);
+}
+
+/* =========================================
+   APPEARANCE CHOICES
+========================================= */
+
+.admin-choice-list {
+    display: grid;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.admin-choice-list label {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+
+    margin: 0 !important;
+    padding: 14px;
+
+    border: 1px solid var(--menu-border);
+    border-radius: 10px;
+
+    background: #fafbfd;
+    cursor: pointer;
+}
+
+.admin-choice-list label:has(input:checked) {
+    border-color: var(--menu-gold);
+    background: #fffaf0;
+}
+
+.admin-choice-list input {
+    width: 17px !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    accent-color: var(--menu-navy);
+}
+
+.admin-choice-list span {
+    display: block;
+}
+
+.admin-choice-list strong,
+.admin-choice-list small {
+    display: block;
+}
+
+.admin-choice-list strong {
+    color: var(--menu-navy);
+    font-size: 13px;
+}
+
+.admin-choice-list small {
+    margin-top: 4px;
+    color: var(--menu-muted);
+    font-size: 11px;
+}
+
+/* =========================================
+   SETTING ROWS
+========================================= */
+
+.admin-setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 14px 0;
+    border-bottom: 1px solid #e8edf3;
+}
+
+.admin-setting-row > div {
+    min-width: 0;
+}
+
+.admin-setting-row strong,
+.admin-setting-row small {
+    display: block;
+}
+
+.admin-setting-row strong {
+    color: var(--menu-navy);
+    font-size: 13px;
+}
+
+.admin-setting-row small {
+    margin-top: 5px;
+    color: var(--menu-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* =========================================
+   ON / OFF SWITCH
+========================================= */
+
+.admin-switch {
+    position: relative;
+    display: inline-flex !important;
+    width: 46px;
+    height: 25px;
+    flex-shrink: 0;
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+.admin-switch input {
+    position: absolute;
+    width: 1px !important;
+    height: 1px;
+    opacity: 0;
+}
+
+.admin-switch-track {
+    position: absolute;
+    inset: 0;
+
+    border-radius: 30px;
+    background: #c8d0dc;
+
+    transition: background .2s ease;
+}
+
+.admin-switch-track::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+
+    width: 19px;
+    height: 19px;
+
+    border-radius: 50%;
+    background: white;
+
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+
+    transition: transform .2s ease;
+}
+
+.admin-switch input:checked + .admin-switch-track {
+    background: #16845b;
+}
+
+.admin-switch input:checked + .admin-switch-track::before {
+    transform: translateX(21px);
+}
+
+.admin-switch input:focus-visible + .admin-switch-track {
+    outline: 3px solid var(--menu-gold);
+    outline-offset: 3px;
+}
+
+/* =========================================
+   ACTIVITY LOG
+========================================= */
+
+.admin-activity-list {
+    max-height: 390px;
     overflow-y: auto;
 }
 
-.side-menu.active {
-    left: 0;
+.admin-activity-item {
+    padding: 13px 0;
+    border-bottom: 1px solid #e8edf3;
 }
 
-/* MENU HEADER */
-.side-menu h2 {
-    color: #d4b678;
-    margin-bottom: 8px;
-}
-
-.side-menu p {
-    color: #cccccc;
-    font-size: 13px;
-    margin-bottom: 25px;
-}
-
-/* MENU LINKS */
-.side-menu a {
+.admin-activity-item strong,
+.admin-activity-item small {
     display: block;
+}
+
+.admin-activity-item strong {
+    color: var(--menu-navy);
+    font-size: 13px;
+}
+
+.admin-activity-item small {
+    margin-top: 5px;
+    color: var(--menu-muted);
+    font-size: 11px;
+}
+
+/* =========================================
+   BACKUP AND RESTORE
+========================================= */
+
+.admin-backup-option {
+    margin: 13px 0;
+    padding: 15px;
+
+    border: 1px solid var(--menu-border);
+    border-radius: 10px;
+
+    background: #fafbfd;
+}
+
+.admin-backup-option > strong,
+.admin-backup-option > small {
+    display: block;
+}
+
+.admin-backup-option > strong {
+    color: var(--menu-navy);
+    font-size: 14px;
+}
+
+.admin-backup-option > small {
+    margin: 6px 0 12px;
+    color: var(--menu-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* =========================================
+   DARK THEME
+========================================= */
+
+body[data-theme="dark"] .admin-tools-panel,
+body[data-theme="dark"] .admin-tools-dialog {
+    background: #14233b;
+    color: #edf2fa;
+    border-color: #35455e;
+}
+
+body[data-theme="dark"] .admin-tools-header {
+    background: #09172d;
+}
+
+body[data-theme="dark"] .admin-tools-profile,
+body[data-theme="dark"] .admin-backup-option,
+body[data-theme="dark"] .admin-choice-list label {
+    background: #1b304d;
+    border-color: #35455e;
+}
+
+body[data-theme="dark"] .admin-tools-profile strong,
+body[data-theme="dark"] .admin-menu-copy strong,
+body[data-theme="dark"] .admin-setting-row strong,
+body[data-theme="dark"] .admin-activity-item strong,
+body[data-theme="dark"] .admin-profile-details p strong,
+body[data-theme="dark"] .admin-tools-dialog h2,
+body[data-theme="dark"] .admin-choice-list strong,
+body[data-theme="dark"] .admin-backup-option > strong {
+    color: #f0c46b;
+}
+
+body[data-theme="dark"] .admin-tools-section button {
+    color: #edf2fa;
+}
+
+body[data-theme="dark"] .admin-tools-section button:hover {
+    background: #263954;
+    border-color: #35455e;
+}
+
+body[data-theme="dark"] .admin-tools-header,
+body[data-theme="dark"] .admin-tools-profile,
+body[data-theme="dark"] .admin-tools-section,
+body[data-theme="dark"] .admin-setting-row,
+body[data-theme="dark"] .admin-activity-item,
+body[data-theme="dark"] .admin-profile-details p {
+    border-color: #35455e;
+}
+
+body[data-theme="dark"] .admin-tools-dialog input:not([type="checkbox"]),
+body[data-theme="dark"] .admin-tools-dialog select {
+    background: #1b304d;
     color: white;
-    text-decoration: none;
-    padding: 13px 12px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    transition: 0.2s;
+    border-color: #455873;
 }
 
-.side-menu a:hover {
-    background: #1e3a8a;
-    color: #d4b678;
-}
-
-/* CLOSE BUTTON */
-.menu-close {
-    position: absolute;
-    top: 15px;
-    right: 18px;
-    background: none;
-    border: none;
+body[data-theme="dark"] .admin-dialog-close,
+body[data-theme="dark"] .admin-tools-close {
+    background: #263954;
     color: white;
-    font-size: 28px;
-    cursor: pointer;
 }
 
-/* MOBILE */
+body[data-theme="dark"] .admin-tools-footer {
+    background: #101e33;
+}
+
+body[data-theme="dark"] .admin-choice-list label:has(input:checked) {
+    background: #263954;
+    border-color: var(--menu-gold);
+}
+
+/* =========================================
+   MOBILE RESPONSIVE
+========================================= */
+
 @media (max-width: 600px) {
-    .menu-toggle {
-        font-size: 22px;
-        padding: 8px 12px;
+    .admin-tools-panel {
+        width: 330px;
+        max-width: 90vw;
     }
 
-    .side-menu {
-        width: 250px;
+    .admin-tools-dialog-overlay {
+        padding: 12px;
     }
+
+    .admin-tools-dialog {
+        padding: 22px 18px;
+        max-height: 90vh;
+    }
+
+    .admin-tools-header {
+        padding: 19px 17px;
+    }
+
+    .admin-tools-section {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+body[data-reduced-motion="true"] *,
+body[data-reduced-motion="true"] *::before,
+body[data-reduced-motion="true"] *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
 }
